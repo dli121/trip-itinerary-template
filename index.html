@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="欧洲行程">
+<meta name="theme-color" content="#0f172a">
+<title>欧洲行程单页 Demo · 14晚</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<style>
+  :root{
+    --bg:#f3f4f6; --card:#ffffff; --ink:#1f2937; --sub:#6b7280; --line:#e5e7eb;
+    --blue:#2563eb; --blue-d:#1d4ed8;
+    --ok:#16a34a; --okbg:#dcfce7; --no:#dc2626; --nobg:#fee2e2; --warn:#d97706; --warnbg:#fef3c7;
+    --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+  }
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0}
+  body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Helvetica Neue",Arial,sans-serif;
+    background:var(--bg); color:var(--ink); line-height:1.55; -webkit-font-smoothing:antialiased; font-size:15px}
+  .wrap{max-width:760px; margin:0 auto; padding-bottom:64px}
+
+  header{background:linear-gradient(rgba(15,23,42,.55),rgba(15,23,42,.62)),url("https://images.unsplash.com/photo-1488646953014-85cb44e25828?auto=format&fit=crop&w=1200&q=70") center/cover; color:#fff; padding:30px 18px 24px; border-radius:0 0 22px 22px; box-shadow:var(--shadow); text-shadow:0 1px 4px rgba(0,0,0,.5)}
+  header h1{margin:0 0 4px; font-size:22px; letter-spacing:.5px}
+  header .dates{font-size:14px; opacity:.92}
+  header .stat{display:flex; gap:18px; margin-top:14px; font-size:13px}
+  header .stat b{display:block; font-size:19px; line-height:1.2}
+  header .stat span{opacity:.85}
+
+  .navwrap{position:sticky; top:0; z-index:500; background:rgba(243,244,246,.96); backdrop-filter:saturate(180%) blur(8px); border-bottom:1px solid var(--line)}
+  .tabs{display:flex; gap:3px; padding:8px 8px 4px}
+  .tab{flex:1; text-align:center; padding:8px 1px; border-radius:11px; font-size:12px; font-weight:600; color:var(--sub); background:transparent; border:none; cursor:pointer; white-space:nowrap}
+  .tab.active{background:var(--blue); color:#fff; box-shadow:var(--shadow)}
+  .timeline{display:flex; gap:7px; overflow-x:auto; padding:4px 10px 9px; -webkit-overflow-scrolling:touch}
+  .timeline::-webkit-scrollbar{display:none}
+  .city-chip{flex:0 0 auto; background:var(--card); border-radius:12px; padding:6px 11px; box-shadow:var(--shadow); text-align:center; min-width:80px; border:1px solid var(--line); cursor:pointer; transition:transform .1s}
+  .city-chip:active{transform:scale(.95)}
+  .city-chip .nm{font-weight:600; font-size:13px}
+  .city-chip .mt{font-size:10.5px; color:var(--sub); margin-top:1px}
+  .city-chip .dot{width:8px;height:8px;border-radius:50%;display:inline-block;margin-right:4px;vertical-align:middle}
+
+  section{padding:14px 14px 0}
+  .hide{display:none !important}
+
+  .city-banner{background:var(--card); border-radius:16px; box-shadow:var(--shadow); border:1px solid var(--line); margin:6px 0 16px; overflow:hidden; scroll-margin-top:118px}
+  .cb-head{padding:12px 16px; font-weight:700; font-size:16px; color:#fff}
+  .city-map{height:248px; width:100%; background:#e5e7eb; z-index:1}
+  .map-fallback{height:100%; display:flex; align-items:center; justify-content:center; text-align:center; color:var(--sub); font-size:13px; padding:0 24px}
+  .map-legend{padding:10px 14px; display:flex; flex-wrap:wrap; gap:9px 16px; font-size:12.5px; align-items:center}
+  .leg{display:inline-flex; align-items:center; gap:6px}
+  .leg .dot2{width:12px; height:12px; border-radius:50%; flex:0 0 auto}
+  .leg a{color:var(--blue); text-decoration:none; font-weight:600; margin-left:2px}
+  .city-food{padding:11px 15px; border-top:1px solid var(--line); background:#fffdf7}
+  .city-food .fl{font-weight:700; color:#b45309; font-size:13px; margin-bottom:8px}
+  .food-strip{display:flex; gap:10px; overflow-x:auto; padding-bottom:4px; -webkit-overflow-scrolling:touch}
+  .food-strip::-webkit-scrollbar{display:none}
+  .food-card{flex:0 0 auto; width:106px}
+  .food-card .thumb{width:106px; height:80px; border-radius:10px; font-size:24px}
+  .food-name{font-size:11.5px; line-height:1.35; margin-top:5px; color:var(--ink)}
+  .city-wx{padding:11px 15px; border-top:1px solid var(--line); font-size:12.5px; color:#475569; background:#f0f9ff}
+  .city-wx b{color:var(--ink)}
+  .access{font-size:12.5px; color:#475569; background:#f1f5f9; border:1px solid var(--line); border-radius:10px; padding:9px 11px; margin-top:8px; line-height:1.75}
+  .access b{color:var(--ink)}
+  .pin-wrap{background:transparent; border:none}
+  .pin{width:24px; height:24px; border-radius:50%; color:#fff; font-weight:700; font-size:12px; display:flex; align-items:center; justify-content:center; border:2px solid #fff; box-shadow:0 1px 4px rgba(0,0,0,.45)}
+  .pin.opt{border-style:dashed}
+
+  .day{background:var(--card); border-radius:16px; box-shadow:var(--shadow); margin-bottom:14px; overflow:hidden; border:1px solid var(--line)}
+  .day-head{display:flex; align-items:center; gap:12px; padding:14px 16px; border-bottom:1px solid var(--line)}
+  .day-head .dnum{flex:0 0 auto; width:50px; text-align:center; border-radius:12px; padding:6px 0; color:#fff; line-height:1.15}
+  .day-head .dnum b{font-size:18px; display:block}
+  .day-head .dnum span{font-size:11px; opacity:.92}
+  .day-head .dtitle{font-weight:700; font-size:16px}
+  .day-head .dtag{font-size:12px; color:var(--sub); margin-top:1px}
+  .day-body{padding:6px 16px 14px}
+
+  .row{display:flex; gap:9px; padding:11px 0; border-bottom:1px dashed var(--line)}
+  .row:last-child{border-bottom:none}
+  .row .ic{flex:0 0 auto; font-size:18px; width:24px; text-align:center; padding-top:1px}
+  .row .body{flex:1; min-width:0}
+  .row .ttl{font-weight:600}
+  .row .meta{font-size:13px; color:var(--sub); margin-top:1px}
+
+  .spot{align-items:flex-start}
+  .sp-main{flex:1; min-width:0}
+  .sp-main .ttl{display:inline-flex; align-items:baseline; gap:6px; flex-wrap:wrap; cursor:pointer}
+  .sp-main .idx{color:var(--blue); font-weight:800}
+  .sp-main .more{font-size:12px; color:var(--blue); font-weight:600}
+  .sp-main .desc{font-size:13.5px; color:#4b5563; margin-top:3px}
+  .sp-main .dist{font-size:12px; color:var(--warn); margin-top:3px; font-weight:600}
+  .sp-main .tkt{font-size:12px; color:#475569; margin-top:3px}
+  .thumb{flex:0 0 auto; width:92px; height:92px; border-radius:12px; cursor:pointer; overflow:hidden; display:flex; align-items:center; justify-content:center; color:#fff; font-size:26px; background:linear-gradient(135deg,#a5b4fc,#f0abfc); background-size:cover; background-position:center; position:relative; box-shadow:var(--shadow)}
+  .thumb.loading{animation:pulse 1.2s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+  .thumb.loaded .ph{display:none}
+  .thumb .badge-cam{position:absolute; right:5px; bottom:5px; background:rgba(0,0,0,.45); border-radius:6px; font-size:10px; padding:1px 5px; color:#fff; line-height:1.4}
+
+  .opt{background:#faf5ff; border:1px dashed #d8b4fe; border-radius:10px; padding:9px 11px; margin-top:2px; width:100%}
+  .opt .lab{font-size:11px; font-weight:700; color:#7c3aed; letter-spacing:.5px}
+
+  .btns{display:flex; gap:7px; margin-top:8px; flex-wrap:wrap}
+  .btn{display:inline-flex; align-items:center; gap:4px; font-size:12.5px; font-weight:600; padding:6px 11px; border-radius:999px; text-decoration:none; border:1px solid var(--line)}
+  .btn.map{background:var(--okbg); color:#15803d; border-color:#bbf7d0}
+  .btn.nav{background:#dbeafe; color:var(--blue-d); border-color:#bfdbfe}
+  .btn:active{transform:scale(.96)}
+
+  .badge{display:inline-block; font-size:11.5px; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap}
+  .b-ok{background:var(--okbg); color:#15803d}
+  .b-no{background:var(--nobg); color:#b91c1c}
+  .b-warn{background:var(--warnbg); color:#b45309}
+
+  .icard{background:var(--card); border-radius:14px; box-shadow:var(--shadow); border:1px solid var(--line); padding:13px 15px; margin-bottom:11px}
+  .icard .top{display:flex; justify-content:space-between; align-items:flex-start; gap:8px}
+  .icard .nm{font-weight:700; font-size:15px}
+  .icard .sub{font-size:13px; color:var(--sub); margin-top:2px}
+  .icard .kv{font-size:13px; margin-top:5px}
+  .icard .kv b{color:var(--ink)}
+  .pri{flex:0 0 auto; width:26px; height:26px; border-radius:8px; background:var(--blue); color:#fff; font-weight:800; font-size:14px; display:flex; align-items:center; justify-content:center}
+
+  /* Weather tab */
+  .wx-tip{background:#eff6ff; border:1px solid #bfdbfe; border-radius:14px; padding:12px 15px; font-size:13px; color:#1e40af; margin-bottom:12px; line-height:1.7}
+  .wx-card{background:var(--card); border-radius:14px; box-shadow:var(--shadow); border:1px solid var(--line); padding:14px 15px; margin-bottom:11px}
+  .wx-card .wh{display:flex; justify-content:space-between; align-items:center; gap:10px}
+  .wx-card .wc{font-weight:700; font-size:15px}
+  .wx-card .wd{font-size:12px; color:var(--sub)}
+  .wx-temp{font-size:14px; font-weight:700; white-space:nowrap}
+  .wx-temp .hi{color:#dc2626}
+  .wx-temp .lo{color:#2563eb}
+  .wx-sum{font-size:13px; color:#475569; margin-top:8px}
+  .wx-wear{font-size:13px; margin-top:7px; background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:9px 11px}
+  .wx-wear b{color:#0f766e}
+
+  /* Phrases tab */
+  .ph-card{background:var(--card); border-radius:14px; box-shadow:var(--shadow); border:1px solid var(--line); margin-bottom:12px; overflow:hidden}
+  .ph-head{font-weight:700; font-size:15px; padding:11px 15px; border-bottom:1px solid var(--line)}
+  .ph-city{font-size:12px; color:var(--sub); font-weight:500; margin-left:4px}
+  .ph-row{display:flex; gap:10px; padding:8px 15px; border-bottom:1px dashed var(--line)}
+  .ph-row:last-child{border-bottom:none}
+  .ph-zh{flex:0 0 36%; font-size:13.5px; color:var(--sub)}
+  .ph-loc{flex:1; font-size:14.5px; font-weight:600}
+  .ph-say{display:block; font-weight:400; color:var(--blue); font-size:12px; margin-top:1px}
+  .ph-note{padding:10px 15px; font-size:13px; color:var(--sub)}
+
+  .note{font-size:12.5px; color:var(--sub); text-align:center; padding:18px 24px 8px; line-height:1.7}
+  .note b{color:var(--ink)}
+  h2.sec{font-size:15px; margin:4px 2px 12px; color:var(--sub); font-weight:700; letter-spacing:.5px}
+
+  .modal-overlay{position:fixed; inset:0; background:rgba(0,0,0,.6); display:flex; align-items:center; justify-content:center; z-index:1000; padding:16px}
+  .modal{background:#fff; border-radius:18px; max-width:520px; width:100%; max-height:88vh; overflow:auto; position:relative; box-shadow:0 12px 44px rgba(0,0,0,.35)}
+  .modal-img{width:100%; height:220px; background:linear-gradient(135deg,#c7d2fe,#fbcfe8); background-size:cover; background-position:center}
+  .modal-x{position:absolute; top:10px; right:10px; width:34px; height:34px; border-radius:50%; border:none; background:rgba(0,0,0,.5); color:#fff; font-size:20px; cursor:pointer; z-index:2; line-height:1}
+  .modal-body{padding:16px 18px 20px}
+  .modal-body h3{margin:0 0 4px; font-size:19px}
+  .modal-tag{font-size:12px; color:var(--sub); margin-bottom:10px}
+  .modal-desc{font-size:14.5px; color:#374151; line-height:1.75; white-space:pre-wrap}
+  .modal-info{background:#f8fafc; border:1px solid var(--line); border-radius:10px; padding:10px 12px; margin-top:12px; font-size:13px}
+  .modal-info .mi{margin:3px 0}
+  .modal-info .mi-note{color:var(--sub); font-size:11.5px; margin-top:6px}
+  .modal-addr{font-size:13px; color:var(--sub); margin-top:12px}
+  .modal-dist{font-size:12.5px; color:var(--warn); margin-top:4px; font-weight:600}
+  .wiki-link{display:inline-block; margin-top:6px; font-size:13px; color:var(--blue); text-decoration:none}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header>
+    <h1>🇪🇺 欧洲家庭行程 · 14晚</h1>
+    <div class="dates">Day 1 — Day 15 · 共14晚（示例）</div>
+    <div class="stat">
+      <div><b>6</b><span>座城市</span></div>
+      <div><b>14</b><span>晚住宿</span></div>
+      <div><b>5</b><span>段城际交通</span></div>
+    </div>
+  </header>
+
+  <div class="navwrap">
+    <nav class="tabs">
+      <button class="tab active" data-tab="trip">📅 行程</button>
+      <button class="tab" data-tab="stay">🏠 住宿</button>
+      <button class="tab" data-tab="move">🚄 交通</button>
+      <button class="tab" data-tab="todo">📝 待办</button>
+      <button class="tab" data-tab="weather">🌤️ 天气</button>
+      <button class="tab" data-tab="phrase">🗣️ 用语</button>
+    </nav>
+    <div class="timeline" id="timeline"></div>
+  </div>
+
+  <section id="trip"></section>
+  <section id="stay" class="hide"><h2 class="sec">住宿预订汇总（共6处 · 示例数据）</h2><div id="stayList"></div></section>
+  <section id="move" class="hide"><h2 class="sec">城际交通 / 票务</h2><div id="moveList"></div></section>
+  <section id="todo" class="hide"><h2 class="sec">还需确认的事项</h2><div id="todoList"></div></section>
+  <section id="weather" class="hide"><h2 class="sec">各城天气 & 穿衣建议（夏季气候均值）</h2><div id="wxList"></div></section>
+  <section id="phrase" class="hide"><h2 class="sec">当地常用语（不会读，把屏幕给店员看也行）</h2><div id="phraseList"></div></section>
+
+  <div class="note">
+    🗺️ 每个城市顶部有<b>总览地图</b>（不同颜色=不同天）、<b>当地美食</b>与<b>天气穿衣</b>。<br>
+    🖼️ 点景点图片看大图+介绍 · 🎫 每个景点标了门票/开放/购票 · 📍地图 / 🧭导航 跳 Google 地图。<br><br>
+    📲 存成 App：Safari/Chrome 打开 → 分享 → “添加到主屏幕”。<br>
+    票价时间仅供参考，以官网为准<br>ℹ️ 演示版：住宿为示例占位、日期已模糊为 Day 1–15，非真实预订信息
+  </div>
+
+</div>
+
+<div id="overlay" class="modal-overlay hide">
+  <div class="modal">
+    <button class="modal-x" id="modalX">×</button>
+    <div class="modal-img" id="modalImg"></div>
+    <div class="modal-body">
+      <h3 id="modalName"></h3>
+      <div class="modal-tag" id="modalTag"></div>
+      <div class="modal-desc" id="modalDesc"></div>
+      <div class="modal-info" id="modalInfo"></div>
+      <div class="modal-addr" id="modalAddr"></div>
+      <div class="modal-dist" id="modalDist"></div>
+      <div class="btns" id="modalBtns"></div>
+      <div><a class="wiki-link" id="wikiLink" target="_blank" rel="noopener">📖 维基百科查看更多 ↗</a></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ====== 数据 ：spot 字段 — n名称 q地图词 wiki中文维基 en英文维基 d简介 a地址 dist距离 lat/lng坐标 ticket门票 hours开放 book购票 mc地图归属城市 ====== */
+const CITIES = [
+  {nm:"马德里",  mt:"Day 1–4 · 3晚", c:"#dc2626"},
+  {nm:"瓦伦西亚", mt:"Day 4–6 · 2晚", c:"#ea580c"},
+  {nm:"布鲁塞尔", mt:"Day 6–8 · 2晚", c:"#ca8a04"},
+  {nm:"科隆",    mt:"Day 8–10 · 2晚", c:"#16a34a"},
+  {nm:"阿姆斯特丹",mt:"Day 10–13 · 3晚", c:"#2563eb"},
+  {nm:"伦敦",    mt:"Day 13–15 · 2晚", c:"#7c3aed"},
+];
+
+/* 各城特色美食 */
+const FOOD = {
+  "马德里":[
+    {n:"烤乳猪 Cochinillo", wiki:"乳猪", en:"Suckling pig", d:"整只乳猪慢烤，皮脆肉嫩，卡斯蒂利亚招牌大菜。"},
+    {n:"马德里炖菜 Cocido", wiki:"馬德里燉肉", en:"Cocido madrileño", d:"鹰嘴豆配多种肉慢炖，先喝汤再吃料，暖胃硬菜。"},
+    {n:"油条蘸热巧克力 Churros", wiki:"吉拿棒", en:"Churro", d:"西班牙油条蘸浓热巧克力，圣希内斯百年老店最有名。"},
+    {n:"鱿鱼三明治 Bocadillo", wiki:"墨魚三明治", en:"Bocadillo de calamares", d:"炸鱿鱼圈夹软面包，马约尔广场一带街头招牌。"},
+    {n:"伊比利亚火腿 Jamón", wiki:"伊比利亚火腿", en:"Jamón ibérico", d:"橡果黑猪风干火腿，入口即化，配面包或蜜瓜。"},
+    {n:"塔帕斯 Tapas", wiki:"塔帕斯", en:"Tapas", d:"西班牙小吃文化，点几样配酒，边吃边逛。"},
+  ],
+  "瓦伦西亚":[
+    {n:"正宗海鲜饭 Paella", wiki:"西班牙海鮮飯", en:"Paella", d:"瓦伦西亚是 Paella 发源地，番红花米饭，海边吃海鲜版。"},
+    {n:"面饭 Fideuà", wiki:"Fideuà", en:"Fideuà", d:"用细面替米的'面海鲜饭'，配蒜泥蛋黄酱 Allioli。"},
+    {n:"油莎豆奶 Horchata", wiki:"歐洽塔", en:"Horchata", d:"油莎豆制成的清甜冷饮，配长条甜点 Fartons。"},
+    {n:"瓦伦西亚之水 Agua de Valencia", wiki:"Agua de Valencia", en:"Agua de Valencia", d:"气泡酒+橙汁+金酒的本地鸡尾酒，清爽微醺。"},
+  ],
+  "布鲁塞尔":[
+    {n:"比利时薯条 Frites", wiki:"炸薯條", en:"Belgian fries", d:"比利时自认薯条发源地，双炸酥脆，配各种蘸酱。"},
+    {n:"青口贝配薯条 Moules-frites", wiki:"青口薯條", en:"Moules-frites", d:"白酒奶油煮青口贝配薯条，比利时国民菜。"},
+    {n:"华夫饼 Gaufre", wiki:"比利時鬆餅", en:"Belgian waffle", d:"列日华夫(焦糖脆)与布鲁塞尔华夫(方格撒糖)，街边热吃。"},
+    {n:"比利时巧克力", wiki:"巧克力", en:"Belgian chocolate", d:"高端手工夹心巧克力 Praline，Neuhaus/Galler 等名店。"},
+    {n:"比利时啤酒", wiki:"比利时啤酒", en:"Beer in Belgium", d:"修道院啤酒、兰比克酸啤等数百种，啤酒文化列入世界遗产。"},
+  ],
+  "科隆":[
+    {n:"科隆啤酒 Kölsch", wiki:"科隆啤酒", en:"Kölsch", d:"科隆专属淡色啤酒，细长 200ml 杯，喝完自动续到你盖杯。"},
+    {n:"天堂大地 Himmel un Ääd", wiki:"Himmel un Ääd", en:"Himmel un Ääd", d:"'天堂与大地'：血肠配苹果泥+土豆泥，科隆传统菜。"},
+    {n:"奶酪黑面包 Halve Hahn", wiki:"Halve Hahn", en:"Halve Hahn", d:"黑麦面包夹熟成高达奶酪+芥末，配啤酒经典小食。"},
+    {n:"德式猪肘 Schweinshaxe", wiki:"德国猪脚", en:"Schweinshaxe", d:"烤到皮脆的德式猪肘，配酸菜和土豆。"},
+    {n:"烤香肠 Bratwurst", wiki:"德國香腸", en:"Bratwurst", d:"德式烤香肠，啤酒馆与街边都有。"},
+  ],
+  "阿姆斯特丹":[
+    {n:"焦糖煎饼 Stroopwafel", wiki:"焦糖煎餅", en:"Stroopwafel", d:"两片薄华夫夹焦糖糖浆，放咖啡杯上焐软最好吃。"},
+    {n:"生鲱鱼 Haring", wiki:"鯡魚", en:"Soused herring", d:"荷兰生腌鲱鱼配洋葱碎，捏尾仰头吃的街头吃法。"},
+    {n:"炸肉丸 Bitterballen", wiki:"Bitterballen", en:"Bitterballen", d:"炸脆球内是浓肉糜，蘸芥末，配啤酒下酒神器。"},
+    {n:"高达奶酪 Gouda", wiki:"高達芝士", en:"Gouda cheese", d:"荷兰国民奶酪，市场可试吃不同熟成度。"},
+    {n:"迷你松饼 Poffertjes", wiki:"Poffertjes", en:"Poffertjes", d:"小松饼撒糖粉加黄油，市集甜点。"},
+  ],
+  "伦敦":[
+    {n:"炸鱼薯条 Fish & Chips", wiki:"炸鱼薯条", en:"Fish and chips", d:"英国国民菜：面糊炸鳕鱼配厚薯条，挤柠檬撒醋。"},
+    {n:"英式早餐 Full English", wiki:"英式早餐", en:"Full breakfast", d:"煎蛋培根香肠焗豆番茄蘑菇吐司，一盘扛半天。"},
+    {n:"周日烤肉 Sunday Roast", wiki:"週日烤肉", en:"Sunday roast", d:"酒馆传统：烤肉配约克郡布丁、烤蔬菜和肉汁。"},
+    {n:"英式下午茶 Afternoon Tea", wiki:"下午茶", en:"Afternoon tea", d:"三层架司康+三明治+甜点配茶，仪式感满满。"},
+    {n:"肉派配土豆泥 Pie & Mash", wiki:"派 (食物)", en:"Pie and mash", d:"伦敦东区传统：肉派配土豆泥与欧芹酱。"},
+    {n:"印度咖喱 Tikka Masala", wiki:"咖喱鸡", en:"Chicken tikka masala", d:"被戏称'英国国菜'的咖喱，砖巷 Brick Lane 最集中。"},
+  ],
+};
+
+/* 各城天气 + 穿衣（夏季气候均值） */
+const WEATHER = [
+  {city:"马德里",   date:"Day 1–3", emo:"☀️", hi:33, lo:18, sum:"全程最热：酷暑干燥、紫外线极强，可能遇热浪 35°C+，几乎不下雨。", wear:"轻薄透气短袖/连衣裙、遮阳帽、墨镜、强效防晒霜、随身水壶；傍晚仍温暖，不必带外套。"},
+  {city:"瓦伦西亚",  date:"Day 4–6", emo:"🌤️", hi:31, lo:22, sum:"地中海闷热潮湿，日照强，海边有风。", wear:"夏装、泳衣拖鞋（海滩）、防晒、补水；室内空调足，备一件薄披肩。"},
+  {city:"布鲁塞尔",  date:"Day 6–8", emo:"🌦️", hi:23, lo:14, sum:"凉爽多云，约一半天数有阵雨，早晚偏凉。", wear:"短袖+薄长袖叠穿、轻便防风防雨外套、折叠伞、舒适走路鞋。"},
+  {city:"科隆",     date:"Day 8–10", emo:"🌦️", hi:25, lo:14, sum:"温和宜人，时有阵雨，傍晚转凉。", wear:"短袖配一件薄外套、备伞；莱茵河边晚风凉。"},
+  {city:"阿姆斯特丹",date:"Day 10–13", emo:"🌬️", hi:22, lo:13, sum:"偏凉多风，阵雨短促说来就来，体感比南欧低不少。", wear:"防风外套、薄长袖、长裤、带伞；骑车/船上注意保暖。"},
+  {city:"伦敦",     date:"Day 13–15", emo:"🌦️", hi:23, lo:14, sum:"天气多变，偶有阵雨，早晚凉爽。", wear:"薄外套+防雨夹克、好走的鞋；一天可能四季，洋葱式穿搭。"},
+];
+
+/* 当地常用语（loc=当地语 say=中文谐音） */
+const PHRASES = [
+  {flag:"🇪🇸", lang:"西班牙语", cities:"马德里 / 瓦伦西亚", items:[
+    {zh:"你好", loc:"Hola", say:"奥拉"},
+    {zh:"谢谢", loc:"Gracias", say:"格拉西亚斯"},
+    {zh:"不客气", loc:"De nada", say:"得 那达"},
+    {zh:"请 / 麻烦了", loc:"Por favor", say:"波尔 法沃尔"},
+    {zh:"对不起 / 打扰", loc:"Perdón / Disculpe", say:"贝尔东 / 迪斯库佩"},
+    {zh:"这个多少钱？", loc:"¿Cuánto cuesta?", say:"光多 奎斯塔"},
+    {zh:"太贵了", loc:"Es muy caro", say:"埃斯 穆伊 卡罗"},
+    {zh:"买单", loc:"La cuenta, por favor", say:"拉 昆塔 波尔法沃尔"},
+    {zh:"洗手间在哪？", loc:"¿Dónde está el baño?", say:"东得 埃斯塔 巴尼奥"},
+    {zh:"干杯", loc:"¡Salud!", say:"萨鲁"},
+    {zh:"再见", loc:"Adiós", say:"阿迪奥斯"},
+  ]},
+  {flag:"🇧🇪", lang:"法语", cities:"布鲁塞尔（也通荷兰语）", items:[
+    {zh:"你好 / 白天好", loc:"Bonjour", say:"播汝"},
+    {zh:"谢谢", loc:"Merci", say:"梅尔西"},
+    {zh:"不客气", loc:"De rien", say:"得 里安"},
+    {zh:"请", loc:"S'il vous plaît", say:"西 乌 普雷"},
+    {zh:"对不起 / 打扰", loc:"Pardon / Excusez-moi", say:"巴尔东 / 埃克斯库泽姆瓦"},
+    {zh:"这个多少钱？", loc:"C'est combien ?", say:"塞 孔比安"},
+    {zh:"太贵了", loc:"C'est trop cher", say:"塞 特罗 谢尔"},
+    {zh:"买单", loc:"L'addition, s'il vous plaît", say:"拉迪雄 西乌普雷"},
+    {zh:"洗手间在哪？", loc:"Où sont les toilettes ?", say:"乌 송 雷 图瓦雷特"},
+    {zh:"干杯", loc:"Santé !", say:"桑泰"},
+    {zh:"再见", loc:"Au revoir", say:"奥 勒夫瓦"},
+  ]},
+  {flag:"🇩🇪", lang:"德语", cities:"科隆", items:[
+    {zh:"你好", loc:"Hallo", say:"哈罗"},
+    {zh:"谢谢", loc:"Danke", say:"当克"},
+    {zh:"不客气 / 请", loc:"Bitte", say:"比特"},
+    {zh:"对不起 / 打扰", loc:"Entschuldigung", say:"恩特书尔迪贡"},
+    {zh:"这个多少钱？", loc:"Was kostet das?", say:"瓦斯 科斯特 达斯"},
+    {zh:"太贵了", loc:"Das ist zu teuer", say:"达斯 伊斯特 楚 托伊尔"},
+    {zh:"买单", loc:"Die Rechnung, bitte", say:"迪 雷希农 比特"},
+    {zh:"洗手间在哪？", loc:"Wo ist die Toilette?", say:"沃 伊斯特 迪 托伊雷特"},
+    {zh:"干杯", loc:"Prost!", say:"普罗斯特"},
+    {zh:"再见", loc:"Auf Wiedersehen / Tschüss", say:"奥夫 维德泽恩 / 去斯"},
+  ]},
+  {flag:"🇳🇱", lang:"荷兰语", cities:"阿姆斯特丹 / 海牙 / 鹿特丹", items:[
+    {zh:"你好", loc:"Hallo", say:"哈罗"},
+    {zh:"谢谢", loc:"Dank je / Bedankt", say:"当克耶 / 贝当克特"},
+    {zh:"不客气", loc:"Graag gedaan", say:"赫拉赫 赫达恩"},
+    {zh:"请", loc:"Alsjeblieft", say:"阿尔谢布利夫特"},
+    {zh:"对不起", loc:"Sorry / Pardon", say:"索里 / 巴尔东"},
+    {zh:"这个多少钱？", loc:"Hoeveel kost dit?", say:"胡飞尔 科斯特 迪特"},
+    {zh:"太贵了", loc:"Te duur", say:"特 杜尔"},
+    {zh:"买单", loc:"De rekening, alstublieft", say:"得 雷克宁 阿尔斯图布利夫特"},
+    {zh:"洗手间在哪？", loc:"Waar is het toilet?", say:"瓦尔 伊斯 赫特 图瓦雷特"},
+    {zh:"干杯", loc:"Proost!", say:"普罗斯特"},
+    {zh:"再见", loc:"Dag / Tot ziens", say:"达赫 / 托特津斯"},
+  ]},
+  {flag:"🇬🇧", lang:"英语", cities:"伦敦", items:[
+    {zh:"伦敦说英语，基本无障碍 🙂 几个地道说法：", loc:"", say:""},
+    {zh:"谢谢（也用作再见）", loc:"Cheers", say:"切尔斯"},
+    {zh:"劳驾 / 不好意思", loc:"Excuse me / Sorry", say:""},
+    {zh:"买单", loc:"Can I get the bill, please?", say:""},
+    {zh:"地铁（伦敦叫法）", loc:"the Tube", say:""},
+  ]},
+];
+
+const DAYS = [
+  { d:"Day 1", w:"", color:"#dc2626", city:"马德里", title:"马德里 · 集合", tag:"会合 · 老城 + 德波日落",
+    transport:[{ic:"🧳", t:"各自抵达马德里", meta:"家人各自航班，抵达时间可单独记录", badge:["b-ok","集合日"]}],
+    stay:{n:"马德里公寓（示例）", a:"市中心（示例地址）", q:"Madrid", access:{from:"马德里巴拉哈斯机场 (MAD)", walk:"不适用（约13km）", taxi:"约30分 · 市区固定价 €30", transit:"地铁8号线进市区换乘，约45分 · €4.5–5（含机场附加费）", station:"最近地铁站 XX（示例），步行约X分"}},
+    spots:[
+      {n:"太阳门广场", q:"Puerta del Sol, Madrid", wiki:"太阳门广场", en:"Puerta del Sol", d:"西班牙公路“零公里”原点，城市最中心。", a:"Puerta del Sol", dist:"距住宿 步行约2分", lat:40.4169, lng:-3.7033, ticket:"免费", hours:"全天开放", book:"无需"},
+      {n:"马约尔广场", q:"Plaza Mayor, Madrid", wiki:"马约尔广场 (马德里)", en:"Plaza Mayor, Madrid", d:"17世纪皇家广场，老城心脏，四周拱廊餐厅。", a:"Plaza Mayor", dist:"距住宿 步行约5分", lat:40.4155, lng:-3.7074, ticket:"免费", hours:"全天开放", book:"无需"},
+      {n:"圣米格尔市场", q:"Mercado de San Miguel, Madrid", wiki:"圣米格尔市场", en:"Mercado de San Miguel", d:"百年铁艺美食市场，火腿、小吃 Tapas，适合当晚饭。", a:"Plaza de San Miguel", dist:"距住宿 步行约8分", lat:40.4153, lng:-3.7090, ticket:"免费入场（餐食另付）", hours:"约 10:00–24:00", book:"无需"},
+      {n:"德波神庙（日落）", q:"Templo de Debod, Madrid", wiki:"德波神庙", en:"Temple of Debod", d:"到达当天傍晚的日落收尾。古埃及神庙，马德里头号看日落地点，水中倒影超美。", a:"Calle de Ferraz 1", dist:"老城西 打车约10分", lat:40.4240, lng:-3.7178, ticket:"免费", hours:"公园全天 / 神庙内部 周二–日 10:00–20:00", book:"内部免费，旺季早到排队"},
+    ]},
+  { d:"Day 2", w:"", color:"#dc2626", city:"马德里", title:"马德里", tag:"艺术金三角 + 公园",
+    stay:{n:"马德里公寓（示例）", a:"市中心（示例地址）", q:"Madrid"},
+    spots:[
+      {n:"普拉多博物馆", q:"Museo del Prado, Madrid", wiki:"普拉多博物馆", en:"Museo del Prado", d:"世界顶级美术馆，戈雅、委拉斯开兹、博斯真迹。", a:"Calle de Ruiz de Alarcón 23", dist:"距住宿 步行约12分", lat:40.4138, lng:-3.6921, ticket:"约 €15（每日 18:00–20:00 免费）", hours:"周一–六 10:00–20:00 / 周日 10:00–19:00", book:"官网或现场"},
+      {n:"丽池公园", q:"Parque del Retiro, Madrid", wiki:"丽池公园", en:"Buen Retiro Park", d:"马德里最美城市公园，水晶宫、湖上划船。", a:"Plaza de la Independencia 7", dist:"普拉多旁 步行约6分", lat:40.4153, lng:-3.6845, ticket:"免费（划船另付）", hours:"约 6:00–24:00（夏季）", book:"无需"},
+      {n:"索菲亚王后艺术中心", q:"Museo Reina Sofia, Madrid", wiki:"索菲亚王后国家艺术中心博物馆", en:"Museo Reina Sofía", d:"毕加索巨作《格尔尼卡》所在地（与普拉多二选一也行）。", a:"Calle de Santa Isabel 52", dist:"距普拉多 步行约10分", lat:40.4080, lng:-3.6946, ticket:"约 €12（周日下午及晚段常免费）", hours:"周一及三–六 10:00–21:00 / 周日 10:00–14:30 / 周二闭馆", book:"官网"},
+    ]},
+  { d:"Day 3", w:"", color:"#dc2626", city:"马德里", title:"马德里 · 半日托莱多", tag:"上午托莱多 + 下午王宫老城",
+    stay:{n:"马德里公寓（示例）", a:"市中心（示例地址）", q:"Madrid"},
+    spots:[
+      {n:"托莱多（上午半日）", q:"Toledo, Spain", wiki:"托莱多 (西班牙)", en:"Toledo, Spain", d:"世界遗产古城，基督教/伊斯兰/犹太三教交融，老城满是中世纪石巷。从 Madrid-Atocha 火车约33分，建议早班车去、午前游主教座堂与城景，午后返回。", a:"Toledo（Madrid-Atocha 发车）", dist:"火车约33分 · 上午往返", lat:39.8567, lng:-4.0245, ticket:"火车约 €11–14/单程；主教座堂约 €12", hours:"古城全天 / 大教堂约 10:00–18:00", book:"Renfe 官网订火车"},
+      {n:"马德里王宫", q:"Palacio Real de Madrid", wiki:"马德里王宫", en:"Royal Palace of Madrid", d:"下午返程后前往。欧洲最大王宫之一，3000余间房，内部金碧辉煌。", a:"Calle de Bailén", dist:"距住宿步行约15分", lat:40.4179, lng:-3.7143, ticket:"约 €14", hours:"约 10:00–19:00（夏季）", book:"官网（避开排队）"},
+      {n:"阿尔穆德纳大教堂", q:"Catedral de la Almudena, Madrid", wiki:"阿尔穆德纳圣母主教座堂", en:"Almudena Cathedral", d:"王宫对面，彩色现代天花板很特别，可上屋顶。", a:"Calle de Bailén 10", dist:"王宫正对面", lat:40.4158, lng:-3.7144, ticket:"教堂免费（建议捐 €1）/ 屋顶约 €3", hours:"约 9:00–20:30", book:"现场"},
+      {n:"格兰大道", q:"Gran Via, Madrid", wiki:"格兰大道", en:"Gran Vía", d:"马德里“百老汇”，傍晚购物、看地标建筑与人海。", a:"Gran Vía", dist:"距住宿步行约8分", lat:40.4203, lng:-3.7039, ticket:"免费", hours:"全天（店铺约 10:00–22:00）", book:"无需"},
+    ]},
+  { d:"Day 4", w:"", color:"#ea580c", city:"瓦伦西亚", title:"马德里 → 瓦伦西亚", tag:"火车 12:15–14:16 · 下午老城",
+    transport:[{ic:"🚄", t:"Madrid → Valencia", meta:"TrainPal 已购 · 12:15–14:16 · 待确认具体车站", badge:["b-ok","已买"], q:"Madrid Puerta de Atocha train station"}],
+    stay:{n:"瓦伦西亚公寓（示例）", a:"市中心（示例地址）", q:"Valencia", access:{from:"瓦伦西亚 Joaquín Sorolla 火车站", walk:"约XX分", taxi:"约5分 · €6–8", transit:"公交/地铁约1–2站（示例）", station:"最近地铁站 XX（示例）"}},
+    spots:[
+      {n:"瓦伦西亚中央市场", q:"Mercat Central de Valencia", wiki:"中央市场 (瓦伦西亚)", en:"Mercat Central", d:"欧洲最大生鲜市场之一，现代主义建筑，火腿水果生蚝。", a:"Plaça de la Ciutat de Bruges", dist:"距住宿 步行约6分", lat:39.4736, lng:-0.3793, ticket:"免费入场", hours:"周一–六 7:30–15:00 / 周日休", book:"无需"},
+      {n:"丝绸交易厅", q:"La Lonja de la Seda, Valencia", wiki:"丝绸交易厅", en:"Llotja de la Seda", d:"哥特式世界遗产，螺旋石柱大厅。", a:"Carrer de la Llotja 2", dist:"市场对面", lat:39.4744, lng:-0.3797, ticket:"约 €2（周日免费）", hours:"周一–六 9:30–19:00 / 周日 10:00–14:00", book:"现场"},
+      {n:"瓦伦西亚主教座堂", q:"Valencia Cathedral", wiki:"瓦伦西亚主教座堂", en:"Valencia Cathedral", d:"据传藏“圣杯”，可登米格雷特钟楼俯瞰老城。", a:"Plaça de l'Almoina", dist:"距住宿 步行约8分", lat:39.4757, lng:-0.3753, ticket:"教堂约 €9（含语音）/ 钟楼约 €2", hours:"约 10:00–18:30", book:"现场"},
+    ]},
+  { d:"Day 5", w:"", color:"#ea580c", city:"瓦伦西亚", title:"瓦伦西亚", tag:"未来建筑 + 海滩海鲜饭",
+    stay:{n:"瓦伦西亚公寓（示例）", a:"市中心（示例地址）", q:"Valencia"},
+    spots:[
+      {n:"艺术科学城", q:"Ciudad de las Artes y las Ciencias, Valencia", wiki:"艺术科学城", en:"City of Arts and Sciences", d:"震撼的未来主义建筑群，含欧洲最大水族馆 Oceanogràfic。", a:"Av. del Professor López Piñero 7", dist:"距住宿 打车约10分", lat:39.4540, lng:-0.3528, ticket:"水族馆约 €36 / 科学馆约 €9 / 套票更划算", hours:"约 10:00–19:00（旺季更晚）", book:"官网更便宜"},
+      {n:"图里亚花园", q:"Jardin del Turia, Valencia", wiki:"图里亚花园", en:"València", d:"9公里旧河床改造的带状公园，骑车散步首选。", a:"Jardí del Túria", dist:"贯穿全城，沿途可达", lat:39.4699, lng:-0.3631, ticket:"免费", hours:"全天开放", book:"无需"},
+      {n:"马尔瓦罗萨海滩", q:"Playa de la Malvarrosa, Valencia", wiki:"马尔瓦罗萨海滩", en:"Valencia, Spain", d:"城市海滩，海鲜饭 Paella 发源地，沙滩餐厅吃正宗。", a:"Playa de la Malvarrosa", dist:"距住宿 打车约15分", lat:39.4716, lng:-0.3258, ticket:"免费", hours:"全天开放", book:"无需"},
+    ]},
+  { d:"Day 6", w:"", color:"#ca8a04", city:"布鲁塞尔", title:"瓦伦西亚 → 布鲁塞尔", tag:"飞机 9:20–11:40 · 下午老城+欧盟区",
+    transport:[
+      {ic:"✈️", t:"Valencia → Brussels Charleroi (CRL)", meta:"携程已购 · 9:20–11:40 · 到沙勒罗瓦机场", badge:["b-ok","已买"], q:"Brussels South Charleroi Airport"},
+      {ic:"🚌", t:"CRL机场 → 布鲁塞尔住宿", meta:"未定：Flibco大巴到 Bruxelles-Midi 再打车，或4人包车", badge:["b-no","待定"]},
+    ],
+    stay:{n:"布鲁塞尔酒店（示例）", a:"市区（示例地址）", q:"Brussels", access:{from:"沙勒罗瓦机场 (CRL)", walk:"不适用（约50km）", taxi:"机场直接打车约 €90 · 约1小时", transit:"Flibco/TEC 大巴到 Bruxelles-Midi 约1h，再地铁至住宿附近（示例）", station:"最近地铁站 XX（示例），步行约X分"}},
+    spots:[
+      {n:"大广场", q:"Grand-Place, Brussels", wiki:"布鲁塞尔大广场", en:"Grand-Place", d:"到达日先去老城（稍远没关系）。世界最美广场之一，金色行会建筑环绕。", a:"Grand-Place / Grote Markt", dist:"距住宿 地铁约15分", lat:50.8467, lng:4.3525, ticket:"免费", hours:"全天开放", book:"无需"},
+      {n:"撒尿小童", q:"Manneken Pis, Brussels", wiki:"尿尿小童", en:"Manneken Pis", d:"布鲁塞尔头号萌地标，常被穿上各种小衣服。", a:"Rue de l'Étuve 31", dist:"大广场旁 步行约3分", lat:50.8450, lng:4.3500, ticket:"免费", hours:"全天开放", book:"无需"},
+      {n:"圣于贝尔皇家长廊", q:"Galeries Royales Saint-Hubert, Brussels", wiki:"圣休伯特长廊", en:"Galeries Royales Saint-Hubert", d:"欧洲最早购物拱廊，巧克力名店、华夫饼。", a:"Galerie du Roi 5", dist:"大广场旁 步行约3分", lat:50.8479, lng:4.3540, ticket:"免费", hours:"全天（店铺各异）", book:"无需"},
+      {n:"欧洲议会·议会博物馆", q:"European Parliament, Brussels", wiki:"欧洲议会", en:"European Parliament", d:"欧盟“大会堂”——立法心脏。Parlamentarium 参观中心免费、有中文语音导览。", a:"Rue Wiertz 60", dist:"距住宿 步行约10分", lat:50.8385, lng:4.3744, ticket:"免费", hours:"约 周一 13:00–18:00 / 周二–日 9:00–18:00（以官网为准）", book:"官网预约 · 带护照安检"},
+    ],
+    opt:{lab:"可选 · 较远", n:"原子球塔", q:"Atomium, Brussels", wiki:"原子球塔", en:"Atomium", d:"到达日体力够可去：1958世博地标，放大1650亿倍的铁晶体，可登顶。", a:"Place de l'Atomium 1", dist:"距住宿 地铁约25分", lat:50.8949, lng:4.3416, ticket:"约 €16", hours:"约 10:00–18:00", book:"官网"}},
+  { d:"Day 7", w:"", color:"#ca8a04", city:"布鲁塞尔", title:"根特 + 布鲁日（一日游）", tag:"比利时双城一日 · 火车往返",
+    transport:[{ic:"🚄", t:"Brussels → 根特 → 布鲁日 → 返", meta:"建议买 SNCB 当日往返；布鲁塞尔→根特约30分，根特→布鲁日约25分", badge:["b-warn","当天买票"], q:"Brussels-Midi station"}],
+    stay:{n:"布鲁塞尔酒店（示例）", a:"市区（示例地址）· 当晚回布鲁塞尔住", q:"Brussels"},
+    spots:[
+      {n:"根特", q:"Ghent, Belgium", wiki:"根特", en:"Ghent", d:"中世纪老城：圣巴夫大教堂（凡·艾克《根特祭坛画》）、伯爵城堡、香草河岸运河景，比布鲁日更生活化。", a:"Gent（Korenmarkt 一带）", dist:"布鲁塞尔火车约30分", lat:51.0543, lng:3.7222, ticket:"火车约 €10/单程；《根特祭坛画》约 €12.5", hours:"城市全天 / 圣巴夫大教堂约 10:00–17:00", book:"SNCB 官网"},
+      {n:"布鲁日", q:"Bruges, Belgium", wiki:"布鲁日", en:"Bruges", d:"童话级中世纪水城：市集广场钟楼、爱之湖、运河游船、巧克力店。", a:"Brugge（Markt 广场）", dist:"根特再坐火车约25分", lat:51.2086, lng:3.2247, ticket:"火车约 €7（自根特）；钟楼约 €16；游船约 €15", hours:"城市全天 / 钟楼约 9:00–18:00", book:"SNCB 官网"},
+    ],
+    opt:{lab:"回程后机动", n:"五十周年纪念公园", q:"Parc du Cinquantenaire, Brussels", wiki:"五十周年纪念公园", en:"Cinquantenaire", d:"傍晚回到布鲁塞尔若有体力，可去凯旋门公园散步。", a:"Parc du Cinquantenaire", dist:"距住宿 步行约10分", lat:50.8401, lng:4.3931, ticket:"公园免费（馆内另付）", hours:"公园全天", book:"无需"}},
+  { d:"Day 8", w:"", color:"#16a34a", city:"科隆", title:"布鲁塞尔 → 科隆", tag:"上午布鲁塞尔机动 · 火车 14:25–17:04",
+    transport:[{ic:"🚄", t:"Bruxelles-Midi → Cologne", meta:"TrainPal 已购 · 14:25–17:04 · 确认到 Köln Hbf", badge:["b-ok","已买"], q:"Köln Hauptbahnhof"}],
+    stay:{n:"科隆酒店（示例）", a:"市区（示例地址）", q:"Cologne", access:{from:"科隆中央车站 Köln Hbf", walk:"约XX分", taxi:"约10分 · €12–15", transit:"地铁数站 + 步行（示例）", station:"最近站 XX（示例）"}},
+    spots:[
+      {n:"比利时皇家美术馆（出发前机动）", q:"Royal Museums of Fine Arts of Belgium, Brussels", wiki:"比利时皇家美术馆", en:"Royal Museums of Fine Arts of Belgium", d:"火车前的上午在布鲁塞尔就近逛：含马格利特博物馆，超现实主义粉丝必看。", a:"Rue de la Régence 3", dist:"上午机动 · 午前回酒店取行李", lat:50.8418, lng:4.3577, mc:"布鲁塞尔", ticket:"约 €15（联票）", hours:"周二–五 10:00–17:00 / 周末 11:00–18:00 / 周一闭", book:"官网"},
+      {n:"科隆大教堂", q:"Cologne Cathedral", wiki:"科隆主教座堂", en:"Cologne Cathedral", d:"傍晚抵达科隆即到。哥特式建筑巅峰（世界遗产），就在火车站旁。", a:"Domkloster 4", dist:"火车站出口即到", lat:50.9413, lng:6.9583, ticket:"教堂免费 / 登塔约 €8 / 珍宝馆约 €8", hours:"约 6:00–20:00（弥撒时段限制参观）", book:"现场"},
+      {n:"霍亨索伦桥", q:"Hohenzollernbrücke, Cologne", wiki:"霍亨索伦桥", en:"Hohenzollern Bridge", d:"挂满爱情锁的铁桥，拍大教堂全景与莱茵河夜景最佳。", a:"Hohenzollernbrücke", dist:"大教堂旁 步行约5分", lat:50.9410, lng:6.9647, ticket:"免费", hours:"全天开放", book:"无需"},
+    ]},
+  { d:"Day 9", w:"", color:"#16a34a", city:"科隆", title:"科隆", tag:"登塔 / 莱茵河 / 巧克力",
+    stay:{n:"科隆酒店（示例）", a:"市区（示例地址）", q:"Cologne"},
+    spots:[
+      {n:"科隆大教堂登塔", q:"Cologne Cathedral", wiki:"科隆主教座堂", en:"Cologne Cathedral", d:"533级台阶登钟楼，俯瞰全城与莱茵河（建议上午人少）。", a:"Domkloster 4", dist:"距住宿 步行约25分 / 地铁约10分", lat:50.9415, lng:6.9585, ticket:"登塔约 €8", hours:"约 9:00–18:00（夏季）", book:"现场购票"},
+      {n:"路德维希博物馆", q:"Museum Ludwig, Cologne", wiki:"路德维希博物馆", en:"Museum Ludwig", d:"现代艺术重镇，毕加索、波普艺术、表现主义。", a:"Heinrich-Böll-Platz", dist:"大教堂旁", lat:50.9408, lng:6.9606, ticket:"约 €11", hours:"周二–日 10:00–18:00 / 周一闭", book:"官网或现场"},
+      {n:"巧克力博物馆", q:"Schokoladenmuseum Köln", wiki:"科隆巧克力博物馆", en:"Imhoff-Schokoladenmuseum", d:"莱茵河畔，巧克力喷泉与试吃，亲子也喜欢。", a:"Am Schokoladenmuseum 1a", dist:"距住宿 步行约15分", lat:50.9319, lng:6.9646, ticket:"约 €15.5", hours:"周二–日 10:00–18:00", book:"官网"},
+      {n:"老城 & 莱茵河畔", q:"Cologne Altstadt Rhine", wiki:"科隆", en:"Cologne", d:"沿河彩色老房子，喝当地 Kölsch 小杯啤酒。", a:"Altstadt-Nord", dist:"大教堂南侧一带", lat:50.9376, lng:6.9608, ticket:"免费", hours:"全天开放", book:"无需"},
+    ]},
+  { d:"Day 10", w:"", color:"#2563eb", city:"阿姆斯特丹", title:"科隆 → 阿姆斯特丹", tag:"火车已买 · 傍晚运河区 + 安妮之家（需订票）",
+    transport:[{ic:"🚄", t:"Köln Hbf → Amsterdam", meta:"已购 · 14:49–17:29 · ICE 直达约2小时40分", badge:["b-ok","已买"], q:"Köln Hauptbahnhof"}],
+    stay:{n:"阿姆斯特丹酒店（示例）", a:"市区（示例地址）", q:"Amsterdam", access:{from:"阿姆斯特丹中央车站", walk:"约XX分（示例）", taxi:"约20分 · €25–30（自 Centraal）", transit:"地铁/电车约15分（示例）", station:"最近站 XX（示例）"}},
+    spots:[
+      {n:"运河带（绅士运河）", q:"Grachtengordel, Amsterdam canal", wiki:"阿姆斯特丹运河", en:"Canals of Amsterdam", d:"世界遗产运河区，山形屋、拱桥，黄昏最美。", a:"Herengracht / Keizersgracht 一带", dist:"距住宿 地铁约15分", lat:52.3667, lng:4.8852, ticket:"免费", hours:"全天开放", book:"无需"},
+      {n:"辛格水上花市", q:"Bloemenmarkt, Amsterdam", wiki:"辛格花市", en:"Bloemenmarkt", d:"全球唯一水上花市，郁金香球茎可买回国。", a:"Singel", dist:"运河区内", lat:52.3669, lng:4.8911, ticket:"免费", hours:"约 9:00–17:30", book:"无需"},
+      {n:"运河游船（黄昏）", q:"Amsterdam canal cruise", wiki:"阿姆斯特丹运河", en:"Canals of Amsterdam", d:"从水上看城市最经典，1小时航线，黄昏船很浪漫。", a:"多个码头（中央站/国立博物馆附近）", dist:"市中心各码头", lat:52.3608, lng:4.8855, ticket:"约 €18–22", hours:"约 9:00–22:00 班次", book:"官网/现场（旺季官网）"},
+      {n:"安妮·弗兰克之家（傍晚·需提前订票）", q:"Anne Frank House, Amsterdam", wiki:"安妮·弗兰克之家", en:"Anne Frank House", d:"到阿姆当晚安排（开放到22:00）。二战密室原址，极催泪。仅官网定时票，提前约6周放票、秒光，务必先抢。", a:"Westermarkt 20", dist:"距运河区 步行约8分 / 自住宿 地铁约15分", lat:52.3752, lng:4.8840, ticket:"约 €16", hours:"约 9:00–22:00", book:"⚠️ 仅官网定时票，提前约6周放票、秒光！"},
+    ]},
+  { d:"Day 11", w:"", color:"#2563eb", city:"阿姆斯特丹", title:"阿姆斯特丹 · 梵高 + 羊角村", tag:"上午梵高博物馆 · 下午自驾羊角村半日",
+    transport:[{ic:"🚗", t:"自驾 Amsterdam → 羊角村 Giethoorn", meta:"提前网上租车；A1高速约1.5h / 120km，村口免费停车。梵高上午看完再取车出发", badge:["b-warn","需提前租车"]}],
+    stay:{n:"阿姆斯特丹酒店（示例）", a:"市区（示例地址）", q:"Amsterdam"},
+    spots:[
+      {n:"梵高博物馆（上午）", q:"Van Gogh Museum, Amsterdam", wiki:"梵高博物馆", en:"Van Gogh Museum", d:"全球最大梵高收藏，《向日葵》《杏花》。建议9:00一开门就进，看完取车出发去羊角村。", a:"Museumplein 6", dist:"距住宿 步行约20分 / 电车约12分", lat:52.3584, lng:4.8811, ticket:"约 €22", hours:"约 9:00–18:00（旺季更晚）", book:"⚠️ 仅官网定时票，务必提前"},
+      {n:"羊角村 Giethoorn（下午半日）", q:"Giethoorn, Netherlands", wiki:"羊角村", en:"Giethoorn", d:"荷兰“绿色威尼斯”：无车村庄，家家门前是运河与拱桥、芦苇顶农舍。租一条“低语船”（whisper boat，电动、无需驾照、坐4人）慢慢逛最惬意。", a:"Giethoorn, Overijssel", dist:"阿姆自驾约1.5h（120km·A1）· 村口免费停车，步行约15分入村", lat:52.7387, lng:6.0784, ticket:"村庄免费 / 低语船约€25/小时（坐4人）/ 导览船约€10/人", hours:"村庄全天 / 船家约9:00–18:00", book:"自驾建议提前网上租车；低语船旺季早到或预订"},
+    ],
+    opt:{lab:"机动 · 雨天/有余力再去", n:"荷兰国立博物馆", q:"Rijksmuseum, Amsterdam", wiki:"荷兰国家博物馆", en:"Rijksmuseum", d:"若羊角村因天气作罢、或另挤出半天，可回博物馆区看伦勃朗《夜巡》、维米尔《倒牛奶的女仆》。", a:"Museumstraat 1", dist:"梵高馆旁 步行约3分", lat:52.3600, lng:4.8852, ticket:"约 €22.5", hours:"9:00–17:00", book:"官网"}},
+  { d:"Day 12", w:"", color:"#2563eb", city:"阿姆斯特丹", title:"海牙 + 鹿特丹（一日游）", tag:"荷兰双城一日 · 火车往返",
+    transport:[{ic:"🚄", t:"Amsterdam → 海牙 → 鹿特丹 → 返", meta:"建议买 NS 当日往返 / Holland Travel Ticket；阿姆→海牙约50分，海牙→鹿特丹约25分", badge:["b-warn","当天买票"], q:"Amsterdam Centraal"}],
+    stay:{n:"阿姆斯特丹酒店（示例）", a:"市区（示例地址）· 当晚回阿姆住", q:"Amsterdam"},
+    spots:[
+      {n:"莫瑞泰斯皇家美术馆（海牙）", q:"Mauritshuis, Den Haag", wiki:"莫瑞泰斯皇家美术馆", en:"Mauritshuis", d:"海牙黄金时代画廊，维米尔《戴珍珠耳环的少女》、伦勃朗真迹，小而精。", a:"Plein 29, Den Haag", dist:"阿姆火车约50分", lat:52.0801, lng:4.3149, ticket:"约 €19", hours:"周二–日 10:00–18:00 / 周一 13:00–18:00", book:"官网"},
+      {n:"海牙老城 & 和平宫", q:"Peace Palace, Den Haag", wiki:"和平宫", en:"Peace Palace", d:"国际法院所在地；老城有国会 Binnenhof，时间够可顺看席凡宁根海滩。", a:"Den Haag", dist:"海牙站附近", lat:52.0866, lng:4.2956, ticket:"外观/访客中心免费 / 内部导览需预约", hours:"访客中心 周二–日（以官网为准）", book:"官网"},
+      {n:"鹿特丹方块屋", q:"Cube houses, Rotterdam", wiki:"立方体房屋", en:"Cube houses", d:"倾斜45度的黄色立方体住宅，鹿特丹先锋建筑名片。", a:"Overblaak 70, Rotterdam", dist:"海牙→鹿特丹约25分", lat:51.9203, lng:4.4901, ticket:"外观免费 / 样板屋约 €3.5", hours:"样板屋约 11:00–17:00", book:"现场"},
+      {n:"鹿特丹拱廊市场", q:"Markthal, Rotterdam", wiki:"鹿特丹拱廊市场", en:"Markthal", d:"马蹄形巨拱美食市场，顶棚巨幅彩绘，吃午/晚餐好去处。", a:"Dominee Jan Scharpstraat 298, Rotterdam", dist:"方块屋旁 步行约3分", lat:51.9201, lng:4.4872, ticket:"免费入场", hours:"周一–六 10:00–20:00 / 周日 12:00–18:00", book:"无需"},
+    ]},
+  { d:"Day 13", w:"", color:"#7c3aed", city:"伦敦", title:"荷兰 → 伦敦", tag:"飞机 · 携程已购 · 下午格林尼治天文台（时间紧）",
+    transport:[{ic:"✈️", t:"荷兰 → 伦敦", meta:"携程已购 · 起飞约 12:35；出发/到达机场与航司见携程票面", badge:["b-ok","已买"]}],
+    stay:{n:"伦敦酒店（示例）", a:"市区（示例地址）", q:"London", access:{from:"伦敦机场（看实际抵达机场）", walk:"不适用", taxi:"自 LHR 约40分 · £55–70", transit:"LHR：地铁进市区约50分 · £5+；LGW：火车到 Victoria 再换地铁约1h", station:"最近地铁站 XX（示例），步行约X分"}},
+    spots:[
+      {n:"格林尼治皇家天文台", q:"Royal Observatory Greenwich", wiki:"格林尼治皇家天文台", en:"Royal Observatory, Greenwich", d:"本初子午线0°经线所在地，双脚跨东西半球；格林尼治标准时间（GMT）起点。山顶可俯瞰泰晤士河与金丝雀码头天际线。", a:"Blackheath Ave, Greenwich SE10", dist:"距住宿较远 · 地铁+DLR约1h · ⚠️最后入场16:15，落地后要抓紧", lat:51.4769, lng:0.0, ticket:"成人约£18（暑期优惠）/ 儿童£9", hours:"10:00–17:00 · 最后入场16:15", book:"⚠️官网定时票，务必提前订；山顶公园与子午线景观免费、开放更晚"},
+    ],
+    opt:{lab:"备选 · 若赶不上天文台16:15", n:"南肯辛顿博物馆区", q:"Natural History Museum, London", wiki:"自然史博物馆 (伦敦)", en:"Natural History Museum, London", d:"万一航班/入境慢了、天文台来不及，就近逛自然史博物馆（免费·恐龙+蓝鲸骨架），或旁边V&A。", a:"Cromwell Rd, South Kensington", dist:"距住宿 地铁约15分", lat:51.4967, lng:-0.1764, ticket:"免费（特展另付）", hours:"约 10:00–17:50", book:"免费，可官网预约时段"}},
+  { d:"Day 14", w:"", color:"#7c3aed", city:"伦敦", title:"布莱顿 + 七姐妹白崖（自由行）", tag:"火车往返 · 海滨小镇 + 白崖",
+    transport:[
+      {ic:"🚄", t:"London Victoria → Brighton", meta:"约1小时，班次密集；提前买 advance single 更便宜，往返约£15–36", badge:["b-warn","建议提前买"], q:"London Victoria station"},
+      {ic:"🚌", t:"Brighton → 七姐妹（12X巴士）", meta:"Brighton海滨坐 12/12A/12X 到 Seven Sisters(Exceat) 约40分，12X最快；当天买票或用Brighton巴士日票", badge:["b-ok","当天买"]},
+    ],
+    stay:{n:"伦敦酒店（示例）", a:"市区（示例地址）", q:"London"},
+    spots:[
+      {n:"布莱顿皇家行宫 Royal Pavilion", q:"Royal Pavilion, Brighton", wiki:"英皇閣", en:"Royal Pavilion", d:"乔治四世的印度莫卧儿式海滨行宫，洋葱穹顶+中式内饰，英国最奇特的皇家建筑之一。", a:"4/5 Pavilion Buildings, Brighton", dist:"Brighton站 步行约10分", lat:50.8225, lng:-0.1372, ticket:"约£19（外观与花园免费）", hours:"约 9:30–17:45", book:"官网或现场"},
+      {n:"布莱顿栈桥 & 海滩", q:"Brighton Palace Pier", wiki:"布萊頓碼頭", en:"Brighton Palace Pier", d:"维多利亚式海上游乐栈桥+卵石海滩，炸鱼薯条、游戏机、海风，英式海滨小镇经典风情。", a:"Madeira Drive, Brighton", dist:"皇家行宫 步行约8分", lat:50.8156, lng:-0.1367, ticket:"栈桥免费（游乐设施另付）", hours:"约 10:00–22:00", book:"无需"},
+      {n:"七姐妹白崖 Seven Sisters", q:"Seven Sisters, Seaford", wiki:"七姊妹 (英格蘭)", en:"Seven Sisters, Sussex", d:"英吉利海峡边连绵起伏的白垩白崖（“White Cliffs of Sussex”），经典机位在 Cuckmere Haven / Seaford Head，绿浪白崖蓝海，非常壮阔。", a:"Seven Sisters Country Park, Exceat", dist:"Brighton坐12X巴士约40分 · 下车再步行上崖顶", lat:50.7444, lng:0.1510, ticket:"免费（乡村公园停车另付）", hours:"全天开放（白天光线好）", book:"无需"},
+    ],
+    opt:{lab:"机动 · Brighton老城", n:"The Lanes 巷弄区", q:"The Lanes, Brighton", wiki:"布萊頓", en:"The Lanes, Brighton", d:"布莱顿老城迷宫小巷，古董店、独立咖啡与小酒馆，回程等车前逛逛。", a:"The Lanes, Brighton", dist:"皇家行宫旁", lat:50.8214, lng:-0.1415, ticket:"免费", hours:"店铺约 10:00–18:00", book:"无需"}},
+  { d:"Day 15", w:"", color:"#7c3aed", city:"伦敦", title:"伦敦 · 南肯辛顿 + 回程", tag:"上午海德公园/帝国理工 · 午后博物馆 · 21:30 Gatwick",
+    transport:[
+      {ic:"🧳", t:"退房 + 寄存行李", meta:"上午退房，行李寄存酒店或 Victoria/Paddington 车站，轻装逛南肯辛顿，约17:00前取行李去机场", badge:["b-ok","提示"]},
+      {ic:"🛫", t:"伦敦 Gatwick → 回程", meta:"21:30 起飞（Gatwick LGW）；建议17:30前到机场，Victoria坐Gatwick Express约30分", badge:["b-ok","已确认"], q:"Gatwick Airport"},
+    ],
+    spots:[
+      {n:"海德公园", q:"Hyde Park, London", wiki:"海德公园 (伦敦)", en:"Hyde Park, London", d:"伦敦最大皇家公园，九曲湖、演讲角，清晨散步很舒服。", a:"Hyde Park", dist:"距住宿 地铁约12分", lat:51.5073, lng:-0.1657, ticket:"免费", hours:"约 5:00–24:00", book:"无需"},
+      {n:"帝国理工学院", q:"Imperial College London South Kensington", wiki:"帝国理工学院", en:"Imperial College London", d:"英国顶尖理工名校，南肯辛顿校区红砖女王塔；校园可自由穿行，出门就是三大博物馆与皇家阿尔伯特音乐厅。", a:"Exhibition Rd, South Kensington", dist:"海德公园南缘 步行约10分", lat:51.4988, lng:-0.1749, ticket:"校园免费参观", hours:"全天（建筑内部限师生）", book:"无需"},
+      {n:"自然历史博物馆", q:"Natural History Museum, London", wiki:"自然史博物馆 (伦敦)", en:"Natural History Museum, London", d:"免费！恐龙、蓝鲸骨架、华丽维多利亚建筑，就在帝国理工旁，午后轻松逛。", a:"Cromwell Rd, South Kensington", dist:"帝国理工 步行约5分", lat:51.4967, lng:-0.1764, ticket:"免费（特展另付）", hours:"约 10:00–17:50", book:"免费，可官网预约时段"},
+    ],
+    opt:{lab:"机动 · 同区二选一", n:"V&A / 科学博物馆", q:"Victoria and Albert Museum, London", wiki:"維多利亞和艾伯特博物館", en:"Victoria and Albert Museum", d:"都免费、都紧挨帝国理工：V&A（设计与工艺极美）或科学博物馆（亲子友好），按兴趣二选一。", a:"Cromwell Rd / Exhibition Rd", dist:"自然史博物馆旁 步行约3分", lat:51.4966, lng:-0.1722, ticket:"免费（特展另付）", hours:"约 10:00–17:45", book:"免费"}},
+];
+
+const STAY = [
+  {city:"马德里",   nm:"马德里公寓（示例）",            in:"Day 1–4 · 3晚", a:"市中心（示例地址）",            via:"Airbnb",  q:"Madrid"},
+  {city:"瓦伦西亚",  nm:"瓦伦西亚公寓（示例）",          in:"Day 4–6 · 2晚", a:"市中心（示例地址）", via:"Airbnb",  q:"Valencia"},
+  {city:"布鲁塞尔",  nm:"布鲁塞尔酒店（示例）",           in:"Day 6–8 · 2晚", a:"市区（示例地址）",            via:"Booking", q:"Brussels"},
+  {city:"科隆",     nm:"科隆酒店（示例）",   in:"Day 8–10 · 2晚", a:"市区（示例地址）",              via:"Booking", q:"Cologne"},
+  {city:"阿姆斯特丹", nm:"阿姆斯特丹酒店（示例）",  in:"Day 10–13 · 3晚", a:"市区（示例地址）",                  via:"酒店官网", q:"Amsterdam"},
+  {city:"伦敦",     nm:"伦敦酒店（示例）",  in:"Day 13–15 · 2晚", a:"市区（示例地址）",                     via:"酒店官网", q:"London"},
+];
+
+const MOVE = [
+  {d:"Day 4", route:"Madrid → Valencia",        ic:"🚄", time:"12:15–14:16", via:"TrainPal", badge:["b-ok","已买"],   note:"确认 Madrid 出发站 / Valencia 到达站"},
+  {d:"Day 6", route:"Valencia → Brussels (CRL)", ic:"✈️", time:"9:20–11:40",  via:"携程",     badge:["b-ok","已买"],   note:"到沙勒罗瓦机场 CRL"},
+  {d:"Day 6", route:"CRL机场 → 布鲁塞尔住宿",  ic:"🚌", time:"未定",        via:"—",        badge:["b-no","未定"],   note:"Flibco 到 Midi 再打车，或4人包车"},
+  {d:"Day 7", route:"Brussels ↔ 根特/布鲁日",     ic:"🚄", time:"当天往返",     via:"SNCB",     badge:["b-warn","当天买"], note:"→根特约30分，→布鲁日约25分"},
+  {d:"Day 8", route:"Bruxelles-Midi → Cologne",  ic:"🚄", time:"14:25–17:04", via:"TrainPal", badge:["b-ok","已买"],   note:"确认是否到 Köln Hbf"},
+  {d:"Day 10", route:"Cologne → Amsterdam",       ic:"🚄", time:"14:49–17:29", via:"已购",     badge:["b-ok","已买"],   note:"ICE 直达约2小时40分"},
+  {d:"Day 11", route:"Amsterdam ↔ 羊角村（自驾）", ic:"🚗", time:"往返各约1.5h", via:"提前租车",   badge:["b-warn","需租车"], note:"A1高速120km；村口免费停车，低语船€25/h"},
+  {d:"Day 12", route:"Amsterdam ↔ 海牙/鹿特丹",   ic:"🚄", time:"当天往返",     via:"NS",       badge:["b-warn","当天买"], note:"NS 当日票 / Holland Travel Ticket"},
+  {d:"Day 14", route:"London ↔ 布莱顿/七姐妹",     ic:"🚄", time:"当天往返",     via:"火车+12X巴士", badge:["b-warn","建议提前买"], note:"Victoria→Brighton约1h（advance票便宜）；Brighton坐12X到Seven Sisters约40分"},
+  {d:"Day 13", route:"荷兰 → 伦敦",                ic:"✈️", time:"约 12:35",     via:"携程",     badge:["b-ok","已买"],   note:"出发/到达机场、航司见携程票面"},
+  {d:"Day 15", route:"伦敦 Gatwick → 回程",       ic:"🛫", time:"21:30",       via:"已订",     badge:["b-ok","已确认"], note:"Gatwick(LGW) · 预留到机场交通约1小时"},
+];
+
+const TODO = [
+  {p:1, t:"抢 梵高博物馆 + 安妮之家 定时票",  badge:["b-no","尽快"],     note:"梵高只卖官网定时票、易售罄；安妮之家提前约6周放票、秒空——两张最优先，越早越好"},
+  {p:2, t:"Day 11 羊角村：提前网上租车",        badge:["b-warn","提前订"], note:"选取/还车点（阿姆市区或Schiphol机场）、保险；旺季车少，早订更便宜"},
+  {p:3, t:"Day 13 格林尼治定时票 + 确认落地机场/时间", badge:["b-warn","提前订"], note:"天文台最后入场16:15；先从携程订单查落地机场与时间，判断当天赶不赶得上"},
+  {p:4, t:"Day 14 London → Brighton 火车票",   badge:["b-warn","可提前"], note:"提前买 advance single 更便宜；Brighton→七姐妹坐12X巴士，当天买即可"},
+  {p:5, t:"Day 6 CRL机场 → 布鲁塞尔住宿",   badge:["b-no","待定"],     note:"仍待定：Flibco大巴+打车，还是直接4人包车"},
+  {p:6, t:"各住宿订单号 / 取消政策",          badge:["b-warn","可整理"], note:"统一整理一份，方便家人随时查"},
+];
+
+/* ====== 渲染 ====== */
+const mapURL = q => "https://www.google.com/maps/search/?api=1&query=" + encodeURIComponent(q);
+const navURL = q => "https://www.google.com/maps/dir/?api=1&destination=" + encodeURIComponent(q);
+const mapBtns = q => `<div class="btns">
+  <a class="btn map" href="${mapURL(q)}" target="_blank" rel="noopener">📍 地图</a>
+  <a class="btn nav" href="${navURL(q)}" target="_blank" rel="noopener">🧭 导航</a>
+</div>`;
+const cityColor = {}; CITIES.forEach(c => cityColor[c.nm] = c.c);
+const cityRange = {}; CITIES.forEach(c => cityRange[c.nm] = c.mt);
+
+let SID = 0; const FLAT = {};
+function reg(s){ const id = "sp" + (SID++); FLAT[id] = s; return id; }
+function thumb(id, s){
+  return `<div class="thumb loading" data-id="${id}" data-zh="${s.wiki||s.n}" data-en="${s.en||''}">
+    <span class="ph">🖼️</span><span class="badge-cam">详情</span></div>`;
+}
+function tktLine(s){ return s.ticket ? `<div class="tkt">🎫 ${s.ticket}　⏰ ${s.hours||'—'}</div>` : ""; }
+
+/* 城市地图数据 */
+const DAYPAL = ["#e11d48","#2563eb","#16a34a","#d97706","#0891b2"];
+const CITYORDER = []; DAYS.forEach(d => { if(!CITYORDER.includes(d.city)) CITYORDER.push(d.city); });
+const MAPDATA = {};
+DAYS.forEach(day => {
+  const items = (day.spots||[]).slice();
+  if(day.opt) items.push(Object.assign({_opt:true}, day.opt));
+  items.forEach(s => {
+    if(s.lat == null) return;
+    const mc = s.mc || day.city;
+    if(!MAPDATA[mc]) MAPDATA[mc] = {points:[], keys:[], days:[]};
+    const md = MAPDATA[mc];
+    let di = md.keys.indexOf(day.d);
+    if(di < 0){ di = md.keys.length; md.keys.push(day.d); md.days.push({d:day.d, w:day.w, color:DAYPAL[di%DAYPAL.length], spots:[]}); }
+    md.days[di].spots.push(s);
+    md.points.push({lat:s.lat, lng:s.lng, n:s.n, color:md.days[di].color, num:md.days[di].spots.length, opt:!!s._opt, day:`${day.d}`});
+  });
+});
+
+document.getElementById("timeline").innerHTML = CITIES.map(c =>
+  `<div class="city-chip" data-city="${c.nm}"><div class="nm"><span class="dot" style="background:${c.c}"></span>${c.nm}</div><div class="mt">${c.mt}</div></div>`
+).join("");
+
+function cityBanner(city){
+  const idx = CITYORDER.indexOf(city);
+  const md = MAPDATA[city] || {days:[]};
+  const legend = md.days.map((dd, i) => {
+    const route = "https://www.google.com/maps/dir/" + dd.spots.map(s => s.lat + "," + s.lng).join("/");
+    return `<span class="leg"><span class="dot2" style="background:${dd.color}"></span>${dd.d} <a href="${route}" target="_blank" rel="noopener">🗺️路线</a></span>`;
+  }).join("");
+  const foodCards = (FOOD[city]||[]).map(f => {
+    const id = reg(Object.assign({}, f, {_food:true, _city:city, q:(f.en||f.n)+" "+city, a:`在${city}的餐厅 / 市场可尝`}));
+    return `<div class="food-card">
+      <div class="thumb loading" data-open="${id}" data-zh="${f.wiki||f.n}" data-en="${f.en||''}"><span class="ph">🍽️</span></div>
+      <div class="food-name">${f.n}</div>
+    </div>`;
+  }).join("");
+  const wx = WEATHER.find(x => x.city === city);
+  return `<div class="city-banner" id="cityb-${idx}">
+    <div class="cb-head" style="background:${cityColor[city]||'#374151'}">📍 ${city}　<span style="font-weight:500;opacity:.9;font-size:13px">${cityRange[city]||''}</span></div>
+    <div class="city-map" id="citymap-${idx}" data-city="${city}"><div class="map-fallback">地图加载中…</div></div>
+    <div class="map-legend">${legend || '<span style="color:var(--sub)">本城暂无标点</span>'}</div>
+    ${foodCards?`<div class="city-food"><div class="fl">🍽️ 当地特色美食（点图看介绍）</div><div class="food-strip">${foodCards}</div></div>`:""}
+    ${wx?`<div class="city-wx">${wx.emo} <b>天气</b> 白天约 ${wx.hi}° / 夜间约 ${wx.lo}°，${wx.sum}<br>👕 <b>穿衣</b>：${wx.wear}</div>`:""}
+  </div>`;
+}
+
+function dayCard(day){
+  let rows = "";
+  (day.transport||[]).forEach(t => {
+    rows += `<div class="row"><div class="ic">${t.ic}</div><div class="body">
+      <div class="ttl">${t.t} ${t.badge?`<span class="badge ${t.badge[0]}">${t.badge[1]}</span>`:""}</div>
+      <div class="meta">${t.meta}</div>
+      ${t.q?`<div class="btns"><a class="btn map" href="${mapURL(t.q)}" target="_blank" rel="noopener">📍 车站/机场</a></div>`:""}
+    </div></div>`;
+  });
+  if(day.stay){
+    const ac = day.stay.access;
+    rows += `<div class="row"><div class="ic">🏠</div><div class="body">
+      <div class="ttl">${day.stay.n}</div><div class="meta">${day.stay.a}</div>
+      ${ac?`<div class="access">🚉 <b>怎么到酒店</b>（从${ac.from}）<br>🚶 步行 ${ac.walk}　🚕 打车 ${ac.taxi}<br>🚇 ${ac.transit}<br>📍 ${ac.station}</div>`:""}
+      ${mapBtns(day.stay.q)}
+    </div></div>`;
+  }
+  (day.spots||[]).forEach((s,i) => {
+    const id = reg(s);
+    rows += `<div class="row spot">
+      <div class="sp-main">
+        <div class="ttl" data-open="${id}"><span class="idx">${i+1}</span> ${s.n} <span class="more">详情›</span></div>
+        <div class="desc">${s.d}</div>
+        ${s.a?`<div class="meta">📍 ${s.a}</div>`:""}
+        ${s.dist?`<div class="dist">⏱ ${s.dist}</div>`:""}
+        ${tktLine(s)}
+        ${mapBtns(s.q)}
+      </div>
+      ${thumb(id, s)}
+    </div>`;
+  });
+  if(day.opt){
+    const id = reg(day.opt);
+    rows += `<div class="row spot">
+      <div class="sp-main"><div class="opt">
+        <div class="lab">${day.opt.lab}</div>
+        <div class="ttl" data-open="${id}" style="margin-top:3px">${day.opt.n} <span class="more">详情›</span></div>
+        <div class="desc">${day.opt.d}</div>
+        ${day.opt.a?`<div class="meta">📍 ${day.opt.a}</div>`:""}
+        ${tktLine(day.opt)}
+        ${mapBtns(day.opt.q)}
+      </div></div>
+      ${thumb(id, day.opt)}
+    </div>`;
+  }
+  return `<div class="day">
+    <div class="day-head">
+      <div class="dnum" style="background:${day.color}"><b>${day.d.replace("Day ","")}</b><span>Day</span></div>
+      <div><div class="dtitle">${day.title}</div><div class="dtag">${day.tag}</div></div>
+    </div>
+    <div class="day-body">${rows}</div>
+  </div>`;
+}
+
+let tripHTML = "", lastCity = null;
+DAYS.forEach(day => {
+  if(day.city !== lastCity){ tripHTML += cityBanner(day.city); lastCity = day.city; }
+  tripHTML += dayCard(day);
+});
+document.getElementById("trip").innerHTML = tripHTML;
+
+document.getElementById("stayList").innerHTML = STAY.map(s => `<div class="icard">
+  <div class="top"><div><div class="nm">${s.nm}</div><div class="sub">${s.city} · ${s.in}</div></div><span class="badge b-ok">✅ 已定</span></div>
+  <div class="kv">📍 <b>${s.a}</b></div><div class="kv">🧾 预订方式：${s.via}</div>${mapBtns(s.q)}
+</div>`).join("");
+
+document.getElementById("moveList").innerHTML = MOVE.map(m => `<div class="icard">
+  <div class="top"><div><div class="nm">${m.ic} ${m.route}</div><div class="sub">${m.d} · ${m.time}</div></div><span class="badge ${m.badge[0]}">${m.badge[1]}</span></div>
+  <div class="kv">🎫 购票：${m.via}</div><div class="kv">📝 ${m.note}</div>
+</div>`).join("");
+
+document.getElementById("todoList").innerHTML = TODO.map(t => `<div class="icard">
+  <div class="top"><div style="display:flex;gap:10px;align-items:center"><span class="pri">${t.p}</span><div class="nm">${t.t}</div></div><span class="badge ${t.badge[0]}">${t.badge[1]}</span></div>
+  <div class="kv" style="margin-top:7px">📝 ${t.note}</div>
+</div>`).join("");
+
+document.getElementById("wxList").innerHTML =
+  `<div class="wx-tip">🧳 <b>整体打包</b>：南欧（马德里/瓦伦西亚）酷热暴晒，重防晒补水；北边（布鲁塞尔/科隆/阿姆/伦敦）凉爽多雨，必带<b>薄外套 + 折叠伞</b>。同一趟旅程日间温差可达 10°C 以上，洋葱式穿搭最省心。</div>` +
+  WEATHER.map(x => `<div class="wx-card">
+    <div class="wh"><div><div class="wc">${x.emo} ${x.city}</div><div class="wd">${x.date}</div></div>
+      <div class="wx-temp"><span class="hi">${x.hi}°</span> / <span class="lo">${x.lo}°</span></div></div>
+    <div class="wx-sum">${x.sum}</div>
+    <div class="wx-wear">👕 <b>穿衣</b>：${x.wear}</div>
+  </div>`).join("");
+
+document.getElementById("phraseList").innerHTML = PHRASES.map(p => `<div class="ph-card">
+  <div class="ph-head">${p.flag} ${p.lang}<span class="ph-city">${p.cities}</span></div>
+  ${p.items.map(it => it.loc
+    ? `<div class="ph-row"><div class="ph-zh">${it.zh}</div><div class="ph-loc">${it.loc}${it.say?`<span class="ph-say">${it.say}</span>`:""}</div></div>`
+    : `<div class="ph-note">${it.zh}</div>`).join("")}
+</div>`).join("");
+
+/* ====== 城市地图（Leaflet + OSM，懒加载） ====== */
+function initMap(el){
+  const city = el.dataset.city, md = MAPDATA[city];
+  if(typeof L === "undefined"){ el.innerHTML = '<div class="map-fallback">🗺️ 地图需联网加载；可用上方“🗺️路线”在 Google 地图查看当天路线。</div>'; return; }
+  if(!md || !md.points.length){ el.innerHTML = '<div class="map-fallback">本城暂无标点</div>'; return; }
+  el.innerHTML = "";
+  const map = L.map(el, {scrollWheelZoom:false});
+  L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {maxZoom:19, attribution:"© OpenStreetMap"}).addTo(map);
+  const bounds = [];
+  md.points.forEach(p => {
+    const icon = L.divIcon({className:"pin-wrap", html:`<div class="pin${p.opt?' opt':''}" style="background:${p.color}">${p.opt?'★':p.num}</div>`, iconSize:[24,24], iconAnchor:[12,12], popupAnchor:[0,-12]});
+    L.marker([p.lat, p.lng], {icon}).addTo(map).bindPopup(`<b>${p.day}</b><br>${p.opt?'★ ':p.num+'. '}${p.n}`);
+    bounds.push([p.lat, p.lng]);
+  });
+  map.fitBounds(bounds, {padding:[28,28], maxZoom:15});
+}
+const mapIO = new IntersectionObserver((es) => {
+  es.forEach(e => { if(e.isIntersecting){ mapIO.unobserve(e.target); initMap(e.target); } });
+}, {rootMargin:"250px"});
+document.querySelectorAll(".city-map").forEach(el => mapIO.observe(el));
+
+/* ====== 维基百科取图 + 中文介绍 ====== */
+const infoCache = new Map();
+function fetchInfo(zh, en){
+  const key = zh + "|" + en;
+  if(infoCache.has(key)) return infoCache.get(key);
+  const p = (async () => {
+    const out = {thumb:null, img:null, extract:null, url:null};
+    async function tryWiki(lang, title){
+      const u = `https://${lang}.wikipedia.org/api/rest_v1/page/summary/` + encodeURIComponent(title);
+      for(let i=0;i<3;i++){
+        try{
+          const r = await fetch(u);
+          if(r.ok) return await r.json();
+          if(r.status === 429){ await new Promise(res => setTimeout(res, 500*(i+1))); continue; }
+          return null;
+        }catch(e){ return null; }
+      }
+      return null;
+    }
+    const zhData = zh ? await tryWiki("zh", zh) : null;
+    if(zhData){
+      if(zhData.thumbnail) out.thumb = zhData.thumbnail.source;
+      if(zhData.originalimage) out.img = zhData.originalimage.source;
+      if(zhData.extract && zhData.type !== "disambiguation") out.extract = zhData.extract;
+      if(zhData.content_urls) out.url = zhData.content_urls.desktop.page;
+    }
+    if(!out.thumb && en){
+      const enData = await tryWiki("en", en);
+      if(enData){
+        if(enData.thumbnail) out.thumb = enData.thumbnail.source;
+        if(enData.originalimage) out.img = enData.originalimage.source;
+        if(!out.url && enData.content_urls) out.url = enData.content_urls.desktop.page;
+      }
+    }
+    return out;
+  })();
+  infoCache.set(key, p);
+  return p;
+}
+let imgActive = 0; const imgQueue = [];
+function imgPump(){ while(imgActive < 4 && imgQueue.length){ const fn = imgQueue.shift(); imgActive++; fn().finally(() => { imgActive--; imgPump(); }); } }
+function hydrate(el){
+  return fetchInfo(el.dataset.zh, el.dataset.en).then(info => {
+    el.classList.remove("loading");
+    const url = info.thumb || info.img;
+    if(url){ el.style.backgroundImage = `url("${url}")`; el.classList.add("loaded"); }
+  });
+}
+const thumbIO = new IntersectionObserver((es) => {
+  es.forEach(e => {
+    if(!e.isIntersecting) return;
+    const el = e.target; thumbIO.unobserve(el);
+    imgQueue.push(() => hydrate(el)); imgPump();
+  });
+}, {rootMargin:"300px"});
+document.querySelectorAll(".thumb").forEach(t => thumbIO.observe(t));
+
+/* ====== 详情弹窗 ====== */
+const overlay = document.getElementById("overlay");
+const modalImg = document.getElementById("modalImg");
+const modalName = document.getElementById("modalName");
+const modalTag = document.getElementById("modalTag");
+const modalDesc = document.getElementById("modalDesc");
+const modalInfo = document.getElementById("modalInfo");
+const modalAddr = document.getElementById("modalAddr");
+const modalDist = document.getElementById("modalDist");
+const modalBtns = document.getElementById("modalBtns");
+const wikiLink = document.getElementById("wikiLink");
+let curId = null;
+function openModal(id){
+  const s = FLAT[id]; if(!s) return;
+  curId = id;
+  modalImg.style.backgroundImage = "";
+  modalName.textContent = s.n;
+  modalTag.textContent = "ℹ️ 介绍加载中…";
+  modalDesc.textContent = s.d || "";
+  if(s._food){
+    modalInfo.innerHTML = "";
+    modalAddr.innerHTML = s.a ? ("📍 " + s.a) : "";
+    modalDist.textContent = "";
+    modalBtns.innerHTML = `<div class="btns"><a class="btn map" href="${mapURL(s.q)}" target="_blank" rel="noopener">🔍 附近哪里吃</a></div>`;
+  } else {
+    modalInfo.innerHTML = s.ticket
+      ? `<div class="mi">🎫 <b>门票</b>：${s.ticket}</div><div class="mi">⏰ <b>开放</b>：${s.hours||'—'}</div><div class="mi">🛒 <b>购票</b>：${s.book||'—'}</div><div class="mi-note">票价/开放时间仅供参考，请以景点官网为准</div>`
+      : "";
+    modalAddr.innerHTML = s.a ? ("📍 " + s.a) : "";
+    modalDist.textContent = s.dist ? ("⏱ " + s.dist) : "";
+    modalBtns.innerHTML = mapBtns(s.q || s.n);
+  }
+  wikiLink.href = "https://zh.wikipedia.org/wiki/" + encodeURIComponent(s.wiki || s.n);
+  overlay.classList.remove("hide");
+  document.body.style.overflow = "hidden";
+  fetchInfo(s.wiki, s.en).then(info => {
+    if(curId !== id) return;
+    const url = info.img || info.thumb;
+    if(url) modalImg.style.backgroundImage = `url("${url}")`;
+    modalTag.textContent = info.extract ? "📖 来自维基百科" : "";
+    if(info.extract) modalDesc.textContent = info.extract;
+    if(info.url) wikiLink.href = info.url;
+  });
+}
+function closeModal(){ overlay.classList.add("hide"); document.body.style.overflow=""; curId=null; }
+document.getElementById("trip").addEventListener("click", e => {
+  const el = e.target.closest("[data-open]"); if(el) openModal(el.dataset.open);
+});
+document.getElementById("modalX").addEventListener("click", closeModal);
+overlay.addEventListener("click", e => { if(e.target === overlay) closeModal(); });
+document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
+
+/* ====== Tab 切换 + 城市跳转 ====== */
+const TABS = ["trip","stay","move","todo","weather","phrase"];
+const timelineEl = document.getElementById("timeline");
+function switchTab(id){
+  document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
+  TABS.forEach(t => document.getElementById(t).classList.toggle("hide", t !== id));
+  timelineEl.style.display = (id === "trip") ? "flex" : "none";
+}
+document.querySelectorAll(".tab").forEach(btn => {
+  btn.addEventListener("click", () => { switchTab(btn.dataset.tab); window.scrollTo({top:0, behavior:"smooth"}); });
+});
+timelineEl.addEventListener("click", e => {
+  const chip = e.target.closest("[data-city]"); if(!chip) return;
+  switchTab("trip");
+  const idx = CITYORDER.indexOf(chip.dataset.city);
+  const el = document.getElementById("cityb-" + idx);
+  if(el) el.scrollIntoView({behavior:"smooth", block:"start"});
+});
+</script>
+</body>
+</html>
