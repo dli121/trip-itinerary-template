@@ -194,6 +194,57 @@
   #outfit .tip{font-size:11.5px;color:var(--sub);margin-top:12px;line-height:1.6}
   #outfit .toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0f172a;color:#fff;font-size:13px;border-radius:99px;padding:9px 18px;opacity:0;transition:.25s;z-index:99;pointer-events:none;white-space:nowrap}
   #outfit .toast.show{opacity:.95}
+
+  /* ===== 足迹 tab ===== */
+  #footprint .fp-sec{padding:0 14px}
+  #footprint .fp-card{background:#fff;border:1px solid #e5e7eb;border-radius:16px;box-shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);padding:13px 14px;margin:10px 0}
+  #footprint .fp-light svg{width:100%;height:auto;display:block}
+  #footprint .fp-stats{font-size:12.5px;color:#6b7280;text-align:center;margin-top:4px}
+  #footprint .fp-daybar{display:flex;gap:7px;overflow-x:auto;padding:12px 12px 6px;-webkit-overflow-scrolling:touch}
+  #footprint .fp-daybar::-webkit-scrollbar{display:none}
+  #footprint .fp-chip{flex:0 0 auto;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:6px 10px;text-align:center;box-shadow:0 1px 3px rgba(0,0,0,.08);cursor:pointer;min-width:74px;position:relative}
+  #footprint .fp-chip .fp-dn{font-weight:700;font-size:13px}
+  #footprint .fp-chip .fp-dc{font-size:10.5px;color:#6b7280;margin-top:1px}
+  #footprint .fp-chip.fp-on{outline:2.5px solid #2563eb;outline-offset:-1px}
+  #footprint .fp-chip .fp-dot{width:7px;height:7px;border-radius:50%;display:inline-block;margin-right:3px;vertical-align:1px}
+  #footprint .fp-chip .fp-badge{position:absolute;top:-6px;right:-5px;background:#dc2626;color:#fff;font-size:10px;font-weight:700;border-radius:99px;min-width:16px;height:16px;line-height:16px;text-align:center;padding:0 3px}
+  #footprint .fp-ctx .fp-ct{font-weight:700;font-size:15.5px}
+  #footprint .fp-ctx .fp-cd{font-size:12.5px;color:#6b7280;margin-top:2px}
+  #footprint .fp-btn-in{display:block;width:100%;border:none;border-radius:14px;padding:15px 0;font:inherit;font-size:16.5px;font-weight:700;background:linear-gradient(135deg,#2563eb,#1d4ed8);color:#fff;cursor:pointer;box-shadow:0 4px 14px rgba(37,99,235,.35);margin:12px 0 4px}
+  #footprint .fp-btn-in:active{transform:scale(.98)}
+  #footprint .fp-item{background:#fff;border:1px solid #e5e7eb;border-radius:14px;box-shadow:0 1px 3px rgba(0,0,0,.06);padding:11px 12px;margin:9px 0}
+  #footprint .fp-row{display:flex;align-items:center;gap:8px;font-size:13px}
+  #footprint .fp-time{font-weight:700;font-size:14px}
+  #footprint .fp-loc{font-size:11.5px;color:#6b7280;background:#f3f4f6;border-radius:99px;padding:2px 8px}
+  #footprint .fp-loc.fp-locok{color:#166534;background:#dcfce7}
+  #footprint .fp-loc.fp-locno{color:#b91c1c;background:#fee2e2;cursor:pointer}
+  #footprint .fp-loc.fp-locplan{color:#166534;background:#dcfce7}
+  #footprint .fp-planname{font-weight:700;font-size:14px;margin-top:6px}
+  #footprint .fp-del{margin-left:auto;border:none;background:none;color:#9ca3af;font-size:15px;cursor:pointer;padding:2px 4px}
+  #footprint .fp-citysw{display:flex;gap:6px;margin-top:8px}
+  #footprint .fp-cbtn{border:1px solid #e5e7eb;background:#fff;border-radius:99px;padding:3px 10px;font:inherit;font-size:12px;cursor:pointer;color:#6b7280}
+  #footprint .fp-cbtn.fp-on{background:#0f172a;color:#fff;border-color:#0f172a}
+  #footprint .fp-photos{display:flex;gap:7px;margin-top:9px;flex-wrap:wrap}
+  #footprint .fp-photos img{width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid #e5e7eb;cursor:pointer}
+  #footprint .fp-addph{width:72px;height:72px;border:1.5px dashed #cbd5e1;border-radius:10px;background:none;color:#94a3b8;font-size:22px;cursor:pointer}
+  #footprint .fp-note{width:100%;border:1px solid #e5e7eb;border-radius:10px;padding:8px 10px;font:inherit;font-size:13.5px;margin-top:9px;resize:none;background:#fafafa;outline:none;min-height:38px}
+  #footprint .fp-note:focus{border-color:#2563eb;background:#fff}
+  #footprint .fp-moods{display:flex;gap:6px;margin-top:8px}
+  #footprint .fp-mood{border:1px solid #e5e7eb;background:#fff;border-radius:10px;padding:4px 0;flex:1;font-size:16px;cursor:pointer;text-align:center}
+  #footprint .fp-mood.fp-on{background:#eff6ff;border-color:#2563eb}
+  #footprint .fp-auto{font-size:11.5px;color:#94a3b8;text-align:center;margin:10px 0}
+  #footprint .fp-empty{text-align:center;color:#94a3b8;font-size:13px;padding:26px 0 16px;line-height:1.8}
+  #footprint .fp-foot{display:flex;gap:9px;margin-top:16px}
+  #footprint .fp-foot button{flex:1;border:none;border-radius:12px;padding:11px 0;font:inherit;font-size:13px;font-weight:600;cursor:pointer;box-shadow:0 1px 3px rgba(0,0,0,.08)}
+  #footprint .fp-exl{background:#2563eb;color:#fff}
+  #footprint .fp-exf{background:#0f172a;color:#fff}
+  #footprint .fp-imp{background:#fff;color:#374151;border:1px solid #e5e7eb}
+  #footprint .fp-tip{font-size:11.5px;color:#6b7280;margin-top:12px;line-height:1.7}
+  #footprint .fp-toast{position:fixed;left:50%;bottom:26px;transform:translateX(-50%);background:#0f172a;color:#fff;font-size:13px;border-radius:99px;padding:9px 18px;opacity:0;transition:.25s;z-index:99;pointer-events:none;white-space:nowrap}
+  #footprint .fp-toast.fp-show{opacity:.95}
+  #footprint .fp-overlay{position:fixed;inset:0;background:rgba(15,23,42,.92);z-index:98;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px}
+  #footprint .fp-overlay img{max-width:94vw;max-height:78vh;border-radius:12px}
+  #footprint .fp-overlay button{border:none;border-radius:99px;padding:9px 22px;font:inherit;font-size:13.5px;cursor:pointer;background:rgba(255,255,255,.14);color:#fff}
 </style>
 </head>
 <body>
@@ -218,6 +269,7 @@
       <button class="tab" data-tab="weather">🌤️ 天气</button>
       <button class="tab" data-tab="phrase">🗣️ 用语</button>
       <button class="tab" data-tab="outfit">👗 穿搭</button>
+      <button class="tab" data-tab="footprint">📍 足迹</button>
     </nav>
     <div class="timeline" id="timeline"></div>
   </div>
@@ -242,6 +294,33 @@
     </div>
     <input type="file" id="odFile" accept="image/*" hidden>
     <div class="toast" id="odToast"></div>
+  </section>
+  <section id="footprint" class="hide">
+    <h2 class="sec">📍 足迹 · 打卡点亮地图(演示 · 数据只存你的浏览器)</h2>
+  <div id="fpRoot">
+    <div class="fp-sec">
+      <div class="fp-card fp-light">
+        <div id="fpLight"></div>
+        <div class="fp-stats" id="fpStats"></div>
+      </div>
+    </div>
+    <div class="fp-daybar" id="fpDaybar"></div>
+    <div class="fp-sec fp-ctx" id="fpCtx"></div>
+    <div class="fp-sec">
+      <button class="fp-btn-in" id="fpCheckin">📍 打 卡</button>
+      <div id="fpList"></div>
+      <div class="fp-foot">
+        <button class="fp-exl" id="fpExL">📤 导出轻量</button>
+        <button class="fp-exf" id="fpExF">💾 完整备份</button>
+        <button class="fp-imp" id="fpImp">📥 恢复</button>
+      </div>
+      <div class="fp-tip">💡 打卡只要一下:自动记时间和位置,照片心得随后补都行。照片和足迹只存这台设备;<b>轻量导出</b>(不含照片)行后发给汇总的人合并;<b>完整备份</b>换机或清数据前自用。首次打卡请允许定位授权。</div>
+    </div>
+    <input type="file" id="fpFile" accept="image/*" multiple hidden>
+    <input type="file" id="fpImpFile" accept="application/json,.json" hidden>
+    <div class="fp-toast" id="fpToast"></div>
+  </div>
+  
   </section>
 
   <div class="note">
@@ -855,7 +934,7 @@ overlay.addEventListener("click", e => { if(e.target === overlay) closeModal(); 
 document.addEventListener("keydown", e => { if(e.key === "Escape") closeModal(); });
 
 /* ====== Tab 切换 + 城市跳转 ====== */
-const TABS = ["trip","stay","move","todo","weather","phrase","outfit"];
+const TABS = ["trip","stay","move","todo","weather","phrase","outfit","footprint"];
 const timelineEl = document.getElementById("timeline");
 function switchTab(id){
   document.querySelectorAll(".tab").forEach(b => b.classList.toggle("active", b.dataset.tab === id));
@@ -1114,6 +1193,500 @@ $("exportBtn").onclick = async () => {
   }
   load();
 })();
+</script>
+<script>
+(function(){
+
+/* ====== 行程数据(与 index.html / 穿搭模板同步) ====== */
+const FPDAYS = [
+  {n:1, d:"", w:"", city:"马德里",   t:"马德里 · 集合"},
+  {n:2, d:"", w:"", city:"马德里",   t:"艺术金三角 + 公园"},
+  {n:3, d:"", w:"", city:"马德里",   t:"半日托莱多 + 王宫"},
+  {n:4, d:"", w:"", city:"瓦伦西亚", t:"马德里 → 瓦伦西亚"},
+  {n:5, d:"", w:"", city:"瓦伦西亚", t:"未来建筑 + 海滩海鲜饭"},
+  {n:6, d:"", w:"", city:"布鲁塞尔", t:"瓦伦西亚 → 布鲁塞尔"},
+  {n:7, d:"", w:"", city:"布鲁塞尔", t:"根特 + 布鲁日一日游"},
+  {n:8, d:"", w:"", city:"科隆",     t:"布鲁塞尔 → 科隆"},
+  {n:9, d:"", w:"", city:"科隆",     t:"登塔 / 莱茵河 / 巧克力"},
+  {n:10,d:"", w:"", city:"阿姆斯特丹",t:"科隆 → 阿姆斯特丹"},
+  {n:11,d:"", w:"", city:"阿姆斯特丹",t:"梵高博物馆 + 羊角村"},
+  {n:12,d:"", w:"", city:"阿姆斯特丹",t:"海牙 + 鹿特丹一日游"},
+  {n:13,d:"", w:"", city:"伦敦",     t:"荷兰 → 伦敦 · 格林尼治"},
+  {n:14,d:"", w:"", city:"伦敦",     t:"布莱顿 + 七姐妹白崖"},
+  {n:15,d:"", w:"", city:"伦敦",     t:"南肯辛顿 + 回程"},
+];
+FPDAYS.forEach(x => { x.iso = ""; });
+const FPCITIES = ["马德里","瓦伦西亚","布鲁塞尔","科隆","阿姆斯特丹","伦敦"];
+const FPCOLOR = {"马德里":"#dc2626","瓦伦西亚":"#ea580c","布鲁塞尔":"#ca8a04","科隆":"#16a34a","阿姆斯特丹":"#2563eb","伦敦":"#7c3aed"};
+const FPSHORT = {"马德里":"马德里","瓦伦西亚":"瓦伦","布鲁塞尔":"布鲁塞尔","科隆":"科隆","阿姆斯特丹":"阿姆","伦敦":"伦敦"};
+/* 移动日:当天可切换归属城市 */
+const FPMOVE = {4:["马德里","瓦伦西亚"], 6:["瓦伦西亚","布鲁塞尔"], 8:["布鲁塞尔","科隆"], 10:["科隆","阿姆斯特丹"], 13:["阿姆斯特丹","伦敦"]};
+const FPMOODS = ["😍","🙂","😮","😅","😭"];
+
+/* ====== 本地存储(IndexedDB;不可用时内存兜底并提示) ====== */
+const fpStore = (() => {
+  let db = null, dead = false;
+  const open = () => new Promise((res, rej) => {
+    if (db) return res(db);
+    let rq;
+    try { rq = indexedDB.open("cd_footprints", 1); } catch(e){ return rej(e); }
+    rq.onupgradeneeded = () => rq.result.createObjectStore("pts", {keyPath:"id"});
+    rq.onsuccess = () => { db = rq.result; res(db); };
+    rq.onerror = () => rej(rq.error);
+  });
+  const fail = e => { if (!dead){ dead = true; fpToast("⚠️ 本机存储不可用,数据仅在本页有效"); } };
+  return {
+    async all(){ try{ const d = await open(); return await new Promise((res,rej)=>{ const t = d.transaction("pts").objectStore("pts").getAll(); t.onsuccess = () => res(t.result || []); t.onerror = () => rej(t.error); }); }catch(e){ fail(e); return []; } },
+    async put(v){ try{ const d = await open(); await new Promise((res,rej)=>{ const t = d.transaction("pts","readwrite").objectStore("pts").put(v); t.onsuccess = res; t.onerror = () => rej(t.error); }); }catch(e){ fail(e); } },
+    async del(id){ try{ const d = await open(); await new Promise((res,rej)=>{ const t = d.transaction("pts","readwrite").objectStore("pts").delete(id); t.onsuccess = res; t.onerror = () => rej(t.error); }); }catch(e){ fail(e); } },
+  };
+})();
+
+/* ====== 状态 ====== */
+let fpPts = [];          // 全部点:{id,type:'in'|'auto',ts,tzo,day,city,lat,lng,acc,loc,photos[],note,mood}
+let fpCur = 1;           // 当前查看的天
+let fpPhTarget = null;   // 等待加照片的记录 id
+let fpReady = null;      // 启动完成的 Promise(覆盖层联动要等它)
+const fp$ = id => document.getElementById(id);
+const fpUid = () => Date.now().toString(36) + Math.random().toString(36).slice(2,7);
+function fpToast(m){ const t = fp$("fpToast"); if (!t) return; t.textContent = m; t.classList.add("fp-show"); clearTimeout(t._h); t._h = setTimeout(() => t.classList.remove("fp-show"), 2200); }
+function fpTodayN(){
+  const now = new Date();
+  const iso = now.getFullYear() + "-" + String(now.getMonth()+1).padStart(2,"0") + "-" + String(now.getDate()).padStart(2,"0");
+  const d = FPDAYS.find(x => x.iso === iso);
+  return d ? d.n : null;
+}
+const fpTime = ts => new Date(ts).toLocaleTimeString("zh-CN", {hour:"2-digit", minute:"2-digit"});
+
+/* ====== 渲染:点亮条 ====== */
+function fpRenderLight(){
+  const litCity = {}, inCnt = {};
+  fpPts.forEach(p => { litCity[p.city] = true; if (p.type !== "auto") inCnt[p.city] = (inCnt[p.city] || 0) + 1; });
+  const W = 600, H = 96, x0 = 52, gap = (W - 104) / (FPCITIES.length - 1);
+  let seg = "", nodes = "";
+  FPCITIES.forEach((c, i) => {
+    const x = x0 + i * gap, lit = !!litCity[c], col = lit ? FPCOLOR[c] : "#d1d5db";
+    if (i < FPCITIES.length - 1){
+      const nl = lit && litCity[FPCITIES[i+1]];
+      seg += `<line x1="${x+20}" y1="40" x2="${x0 + (i+1)*gap - 20}" y2="40" stroke="${nl ? "#94a3b8" : "#e5e7eb"}" stroke-width="3" ${nl ? "" : 'stroke-dasharray="4 5"'} stroke-linecap="round"/>`;
+    }
+    if (lit) nodes += `<circle cx="${x}" cy="40" r="24" fill="${FPCOLOR[c]}" opacity=".18"/>`;
+    nodes += `<circle cx="${x}" cy="40" r="16" fill="${col}"/>`;
+    nodes += `<text x="${x}" y="45" text-anchor="middle" font-size="13" font-weight="700" fill="#fff">${inCnt[c] || (lit ? "✓" : "")}</text>`;
+    nodes += `<text x="${x}" y="82" text-anchor="middle" font-size="13.5" fill="${lit ? "#1f2937" : "#9ca3af"}" font-weight="${lit ? 700 : 400}">${FPSHORT[c]}</text>`;
+  });
+  fp$("fpLight").innerHTML = `<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg">${seg}${nodes}</svg>`;
+  const nIn = fpPts.filter(p => p.type !== "auto").length, nAuto = fpPts.length - nIn;
+  fp$("fpStats").textContent = `🔥 点亮 ${Object.keys(litCity).filter(c => FPCITIES.includes(c)).length}/6 城 · 打卡 ${nIn} 次 · 顺手位置点 ${nAuto} 个`;
+}
+
+/* ====== 渲染:日历条 / 当天头卡 ====== */
+function fpRenderDaybar(){
+  fp$("fpDaybar").innerHTML = FPDAYS.map(x => {
+    const k = fpPts.filter(p => p.day === x.n && p.type !== "auto").length;
+    return `<div class="fp-chip${x.n === fpCur ? " fp-on" : ""}" data-n="${x.n}">
+      ${k ? `<span class="fp-badge">${k}</span>` : ""}
+      <div class="fp-dn">Day ${x.n}</div>
+      <div class="fp-dc"><span class="fp-dot" style="background:${FPCOLOR[x.city]}"></span>${x.city}</div>
+    </div>`;
+  }).join("");
+  document.querySelectorAll("#fpDaybar .fp-chip").forEach(c => c.onclick = () => { fpCur = +c.dataset.n; fpRender(); });
+}
+function fpRenderCtx(){
+  const d = FPDAYS[fpCur-1], today = fpTodayN();
+  const tag = today === d.n ? ' <span style="color:#16a34a;font-size:12px;font-weight:600">· 今天</span>' : "";
+  fp$("fpCtx").innerHTML = `<div class="fp-card" style="border-top:4px solid ${FPCOLOR[d.city]};margin-bottom:0">
+    <div class="fp-ct">Day ${d.n} · ${d.city}${tag}</div>
+    <div class="fp-cd">${d.t}</div>
+  </div>`;
+}
+
+/* ====== 渲染:当天记录列表 ====== */
+function fpRenderList(){
+  const day = FPDAYS[fpCur-1];
+  const ins = fpPts.filter(p => p.day === fpCur && p.type !== "auto").sort((a,b) => a.ts - b.ts);
+  const nAuto = fpPts.filter(p => p.day === fpCur && p.type === "auto").length;
+  let h = ins.map(p => {
+    const isPlan = p.type === "plan";
+    const loc = isPlan ? `<span class="fp-loc fp-locplan">✅ 行程勾选 · 坐标行后按景点补</span>`
+             : p.loc === "ok" ? `<span class="fp-loc fp-locok">📍 ±${p.acc}m</span>`
+             : p.loc === "no" ? `<span class="fp-loc fp-locno" data-relo="${p.id}">📡 定位失败·点重试</span>`
+             : `<span class="fp-loc">⏳ 定位中…</span>`;
+    const del = isPlan ? `<button class="fp-del" data-undel="1">🔒</button>` : `<button class="fp-del" data-del="${p.id}">🗑</button>`;
+    const nameLine = isPlan ? `<div class="fp-planname">📌 ${p.name || ""}</div>` : "";
+    const sw = (!isPlan && FPMOVE[p.day]) ? `<div class="fp-citysw">${FPMOVE[p.day].map(c =>
+        `<button class="fp-cbtn${p.city === c ? " fp-on" : ""}" data-city="${c}" data-id="${p.id}">${c}</button>`).join("")}</div>` : "";
+    const phs = p.photos.map((src, i) => `<img src="${src}" data-view="${p.id}:${i}" alt="">`).join("")
+      + (p.photos.length < 3 ? `<button class="fp-addph" data-add="${p.id}">📷</button>` : "");
+    const moods = FPMOODS.map(m => `<button class="fp-mood${p.mood === m ? " fp-on" : ""}" data-mood="${m}" data-id="${p.id}">${m}</button>`).join("");
+    return `<div class="fp-item">
+      <div class="fp-row"><span class="fp-time">${fpTime(p.ts)}</span>${loc}${del}</div>
+      ${nameLine}${sw}
+      <div class="fp-photos">${phs}</div>
+      <textarea class="fp-note" data-note="${p.id}" placeholder="一句话心得(可以随后补)…">${p.note || ""}</textarea>
+      <div class="fp-moods">${moods}</div>
+    </div>`;
+  }).join("");
+  if (!ins.length) h = `<div class="fp-empty">这一天还没有打卡<br>到了景点/餐厅,点上面「📍 打卡」就行</div>`;
+  if (nAuto) h += `<div class="fp-auto">📡 另有 ${nAuto} 个顺手位置点(打开页面时自动记录,用于行后画轨迹)</div>`;
+  fp$("fpList").innerHTML = h;
+
+  document.querySelectorAll("[data-undel]").forEach(b => b.onclick = () => fpToast("这条来自行程页「✅ 去过了」,要删就去行程页取消勾选"));
+  document.querySelectorAll("[data-del]").forEach(b => b.onclick = async () => {
+    if (!confirm("删除这条打卡?")) return;
+    fpPts = fpPts.filter(p => p.id !== b.dataset.del);
+    await fpStore.del(b.dataset.del); fpRender(); fpToast("已删除");
+  });
+  document.querySelectorAll("[data-relo]").forEach(b => b.onclick = () => { const p = fpPts.find(x => x.id === b.dataset.relo); if (p){ p.loc = "…"; fpRender(); fpLocate(p); } });
+  document.querySelectorAll("[data-add]").forEach(b => b.onclick = () => { fpPhTarget = b.dataset.add; fp$("fpFile").value = ""; fp$("fpFile").click(); });
+  document.querySelectorAll("[data-view]").forEach(im => im.onclick = () => fpViewPhoto(im.dataset.view));
+  document.querySelectorAll("[data-mood]").forEach(b => b.onclick = async () => {
+    const p = fpPts.find(x => x.id === b.dataset.id); if (!p) return;
+    p.mood = (p.mood === b.dataset.mood) ? "" : b.dataset.mood;
+    await fpStore.put(p); fpRenderList();
+  });
+  document.querySelectorAll("[data-city]").forEach(b => b.onclick = async () => {
+    const p = fpPts.find(x => x.id === b.dataset.id); if (!p) return;
+    p.city = b.dataset.city; await fpStore.put(p); fpRender();
+  });
+  document.querySelectorAll("[data-note]").forEach(t => {
+    t.oninput = () => { clearTimeout(t._h); t._h = setTimeout(async () => {
+      const p = fpPts.find(x => x.id === t.dataset.note); if (!p) return;
+      p.note = t.value.trim(); await fpStore.put(p);
+    }, 500); };
+  });
+}
+function fpRender(){ fpRenderLight(); fpRenderDaybar(); fpRenderCtx(); fpRenderList(); }
+
+/* ====== 打卡 + 定位 ====== */
+function fpLocate(rec, silentFail){
+  if (!navigator.geolocation){ rec.loc = "no"; fpStore.put(rec); fpRender(); return; }
+  navigator.geolocation.getCurrentPosition(async pos => {
+    rec.lat = +pos.coords.latitude.toFixed(6); rec.lng = +pos.coords.longitude.toFixed(6);
+    rec.acc = Math.round(pos.coords.accuracy); rec.loc = "ok";
+    try{ localStorage.setItem("fp_geo_ok", "1"); }catch(e){}
+    await fpStore.put(rec); fpRender();
+  }, async err => {
+    rec.loc = "no"; await fpStore.put(rec); fpRender();
+    if (!silentFail) fpToast("定位没成功,不影响保存,可稍后点重试");
+  }, {enableHighAccuracy:true, timeout:8000, maximumAge:30000});
+}
+async function fpCheckinNow(){
+  const day = fpTodayN() ?? fpCur;
+  const rec = {id:fpUid(), type:"in", ts:Date.now(), tzo:-new Date().getTimezoneOffset(),
+    day, city:FPDAYS[day-1].city, lat:null, lng:null, acc:null, loc:"…", photos:[], note:"", mood:""};
+  fpPts.push(rec); await fpStore.put(rec);
+  fpCur = day; fpRender();
+  fpLocate(rec);
+  fpToast("已打卡 📍 定位中…照片心得随后补");
+}
+
+/* ====== 顺手位置点:打开/切回页面时静默补一个(已授权过定位、行程期内、间隔>10分钟) ====== */
+function fpAutoPoint(){
+  let ok = null; try{ ok = localStorage.getItem("fp_geo_ok"); }catch(e){}
+  if (!ok || !navigator.geolocation) return;
+  const day = fpTodayN(); if (day == null) return;
+  let last = 0; try{ last = +localStorage.getItem("fp_auto_ts") || 0; }catch(e){}
+  if (Date.now() - last < 10*60*1000) return;
+  navigator.geolocation.getCurrentPosition(async pos => {
+    try{ localStorage.setItem("fp_auto_ts", String(Date.now())); }catch(e){}
+    const rec = {id:fpUid(), type:"auto", ts:Date.now(), tzo:-new Date().getTimezoneOffset(),
+      day, city:FPDAYS[day-1].city, lat:+pos.coords.latitude.toFixed(6), lng:+pos.coords.longitude.toFixed(6),
+      acc:Math.round(pos.coords.accuracy), loc:"ok", photos:[], note:"", mood:""};
+    fpPts.push(rec); await fpStore.put(rec); fpRender();
+  }, () => {}, {enableHighAccuracy:false, timeout:6000, maximumAge:120000});
+}
+
+/* ====== 照片:压缩后存本机;点击看大图/删除 ====== */
+function fpCompress(f){
+  return new Promise(res => {
+    const img = new Image();
+    img.onload = () => {
+      const M = 1400, r = Math.min(1, M / Math.max(img.width, img.height));
+      const c = document.createElement("canvas");
+      c.width = Math.round(img.width * r); c.height = Math.round(img.height * r);
+      c.getContext("2d").drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(img.src);
+      res(c.toDataURL("image/jpeg", .82));
+    };
+    img.onerror = () => res(null);
+    img.src = URL.createObjectURL(f);
+  });
+}
+fp$("fpFile").onchange = async () => {
+  const p = fpPts.find(x => x.id === fpPhTarget);
+  const files = Array.from(fp$("fpFile").files || []);
+  if (!p || !files.length) return;
+  const room = 3 - p.photos.length;
+  for (const f of files.slice(0, room)){
+    const u = await fpCompress(f);
+    if (u) p.photos.push(u);
+  }
+  if (files.length > room) fpToast(`每条最多 3 张,多的没加`);
+  await fpStore.put(p); fpRenderList(); fpRenderDaybar();
+};
+function fpViewPhoto(key){
+  const [id, idx] = key.split(":");
+  const p = fpPts.find(x => x.id === id); if (!p) return;
+  const ov = document.createElement("div");
+  ov.className = "fp-overlay";
+  ov.innerHTML = `<img src="${p.photos[+idx]}" alt=""><button data-x="del">🗑 删除此照片</button><button data-x="close">关闭</button>`;
+  ov.onclick = async e => {
+    const x = e.target.dataset && e.target.dataset.x;
+    if (x === "del"){ p.photos.splice(+idx, 1); await fpStore.put(p); fpRenderList(); }
+    else if (e.target !== ov && x !== "close") return;
+    ov.remove();
+  };
+  fp$("fpRoot").appendChild(ov);
+}
+
+/* ====== 与行程覆盖层联动:「✅ 去过了」⇆ 足迹记录 ======
+   覆盖层(cd_overlay)勾选时调 window.CDFP;启动时对账,保证两边一致。
+   坐标不现场定位:行后管线按景点名从行程数据反查,更准。 */
+const fpPlanName = k => { const m = /^d\d+:(.*)$/.exec(k); return m ? m[1].replace(/^\d+/, "") : k; };
+async function fpAddPlanRec(key, info){
+  if (fpPts.some(p => p.type === "plan" && p.plan === key)) return;
+  const day = Math.min(Math.max(info.day || 1, 1), FPDAYS.length);
+  const rec = {id:fpUid(), type:"plan", plan:key, name:info.name || fpPlanName(key),
+    ts:info.ts || Date.now(), tzo:-new Date().getTimezoneOffset(), day,
+    city:FPDAYS[day-1].city, lat:null, lng:null, acc:null, loc:"plan",
+    photos:[], note:info.note || "", mood:""};
+  fpPts.push(rec); await fpStore.put(rec);
+}
+async function fpDropPlanRec(p, quiet){
+  if (p.photos.length || p.note){
+    p.type = "in"; p.loc = "no";
+    if (p.name && !(p.note || "").includes(p.name)) p.note = (p.name + " " + (p.note || "")).trim();
+    await fpStore.put(p);
+    if (!quiet) fpToast("已取消勾选,这条有照片/心得,保留为普通打卡"); }
+  else { fpPts = fpPts.filter(x => x.id !== p.id); await fpStore.del(p.id); }
+}
+async function fpReconcilePlan(){
+  let ovd = null; try{ ovd = JSON.parse(localStorage.getItem("cd_overlay") || "null"); }catch(e){}
+  const items = (ovd && ovd.items) || {};
+  const want = {};
+  for (const k in items){
+    const s = items[k], m = /^d(\d+):/.exec(k);
+    if (!s || s.v !== "done" || !m) continue;
+    want[k] = {day:+m[1], note:s.note || "", ts:s.ts};
+  }
+  for (const p of fpPts.filter(x => x.type === "plan")) if (!want[p.plan]) await fpDropPlanRec(p, true);
+  for (const k in want) await fpAddPlanRec(k, want[k]);
+}
+window.CDFP = {
+  async addPlan(key, info){ await fpReady; await fpAddPlanRec(key, info); fpRender(); },
+  async removePlan(key){ await fpReady;
+    const p = fpPts.find(x => x.type === "plan" && x.plan === key);
+    if (p){ await fpDropPlanRec(p); fpRender(); } },
+  async updateNote(key, note){ await fpReady;
+    const p = fpPts.find(x => x.type === "plan" && x.plan === key);
+    if (p){ p.note = note; await fpStore.put(p); fpRender(); } },
+};
+
+/* ====== 导出 / 恢复 ====== */
+function fpDevice(){
+  let v = null; try{ v = localStorage.getItem("fp_device"); }catch(e){}
+  if (!v){ v = (prompt("给这台设备起个名(行后合并时区分是谁的,如:妈妈的手机)", "") || "未命名").trim() || "未命名";
+    try{ localStorage.setItem("fp_device", v); }catch(e){} }
+  return v;
+}
+function fpOverlayData(){ try{ return JSON.parse(localStorage.getItem("cd_overlay") || "null"); }catch(e){ return null; } }
+function fpExport(full){
+  if (!fpPts.length && !fpOverlayData()) return fpToast("还没有任何足迹");
+  const device = fpDevice();
+  const points = fpPts.slice().sort((a,b) => a.ts - b.ts)
+    .map(p => full ? p : Object.assign({}, p, {photos:undefined, photoCount:p.photos.length}));
+  const blob = new Blob([JSON.stringify({app:"欧洲行足迹", ver:1, device, exported:new Date().toISOString(), full:!!full, points, overlay:fpOverlayData()}, null, 1)], {type:"application/json"});
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = `足迹_${device}_${full ? "完整备份" : "轻量"}_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  fpToast(full ? "完整备份已导出" : "轻量数据已导出,微信发给汇总的人");
+}
+fp$("fpExL").onclick = () => fpExport(false);
+fp$("fpExF").onclick = () => fpExport(true);
+fp$("fpImp").onclick = () => { fp$("fpImpFile").value = ""; fp$("fpImpFile").click(); };
+fp$("fpImpFile").onchange = () => {
+  const f = fp$("fpImpFile").files[0]; if (!f) return;
+  const rd = new FileReader();
+  rd.onload = async () => {
+    try{
+      const j = JSON.parse(rd.result);
+      if (j.app !== "欧洲行足迹" || !Array.isArray(j.points)) throw 0;
+      let n = 0;
+      for (const p of j.points){
+        if (!p.id || fpPts.some(x => x.id === p.id)) continue;
+        if (!Array.isArray(p.photos)) p.photos = [];
+        fpPts.push(p); await fpStore.put(p); n++;
+      }
+      fpRender(); fpToast(`已恢复 ${n} 条记录`);
+    }catch(e){ fpToast("文件不对,需要本页导出的 JSON"); }
+  };
+  rd.readAsText(f);
+};
+
+
+async function fpDemoSeed(){
+  let done = null; try{ done = localStorage.getItem("fp_demo_v1"); }catch(e){}
+  if (done || fpPts.length) return;
+  const seeds = [
+    {day:1, city:"马德里",   lat:40.4169, lng:-3.7033, note:"示例:太阳门广场,到啦!", mood:"😍", h:10},
+    {day:1, city:"马德里",   lat:40.4155, lng:-3.7074, note:"示例:马约尔广场晚餐",   mood:"🙂", h:19},
+    {day:6, city:"布鲁塞尔", lat:50.8467, lng:4.3525,  note:"示例:大广场夜景",       mood:"😮", h:20},
+    {day:8, city:"科隆",     lat:50.9413, lng:6.9583,  note:"示例:科隆大教堂",       mood:"😍", h:11},
+  ];
+  for (const s of seeds){
+    const t = new Date(); t.setHours(s.h, 24, 0, 0);
+    const rec = {id:fpUid(), type:"in", ts:t.getTime(), tzo:-t.getTimezoneOffset(), day:s.day, city:s.city,
+      lat:s.lat, lng:s.lng, acc:12, loc:"ok", photos:[], note:s.note, mood:s.mood};
+    fpPts.push(rec); await fpStore.put(rec);
+  }
+  try{ localStorage.setItem("fp_demo_v1", "1"); }catch(e){}
+}
+
+/* ====== 启动 ====== */
+fpReady = (async () => {
+  fpPts = await fpStore.all();
+  fpPts.forEach(p => { if (!Array.isArray(p.photos)) p.photos = []; });
+  await fpDemoSeed();
+  fpCur = fpTodayN() ?? 1;
+  await fpReconcilePlan();
+  fp$("fpCheckin").onclick = fpCheckinNow;
+  document.addEventListener("visibilitychange", () => { if (!document.hidden) fpAutoPoint(); });
+  fpAutoPoint();
+  fpRender();
+})();
+
+})();
+</script>
+<script>
+/* ====== 计划覆盖层:行程 tab 勾选/跳过/备注/临时加点 ======
+   行中改动只存本机 localStorage("cd_overlay"),不改静态行程;
+   导出走足迹 tab 的导出按钮(自动附带),行后由 Python 合并生成"计划 vs 实际"。
+   由构建脚本注入合并版/公开版,源 index.html 保持纯净。 */
+(function(){
+  const LS = "cd_overlay";
+  let ov;
+  try{ ov = JSON.parse(localStorage.getItem(LS) || "{}"); }catch(e){ ov = {}; }
+  ov.items = ov.items || {};    // key -> {v:"done"|"skip"|"", note, _open}
+  ov.extras = ov.extras || {};  // Day号 -> [{t, ts}]
+  const save = () => { try{ localStorage.setItem(LS, JSON.stringify(ov)); }catch(e){} };
+  const esc = s => String(s).replace(/[&<>"']/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+
+  const css = document.createElement("style");
+  css.textContent = [
+    ".ov-bar{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}",
+    ".ov-b{border:1px solid #e5e7eb;background:#fff;border-radius:99px;padding:3px 10px;font:inherit;font-size:12px;color:#6b7280;cursor:pointer}",
+    ".ov-b.ov-on{background:#dcfce7;border-color:#16a34a;color:#166534;font-weight:600}",
+    ".ov-b.ov-onx{background:#e5e7eb;color:#374151;font-weight:600}",
+    ".row.ov-skip .sp-main,.row.ov-skip .body{opacity:.45}",
+    ".row.ov-skip .ttl{text-decoration:line-through}",
+    ".ov-note{display:block;width:100%;box-sizing:border-box;border:1px solid #fcd34d;border-radius:10px;padding:7px 9px;font:inherit;font-size:12.5px;margin-top:7px;resize:none;background:#fffbeb;outline:none;min-height:34px}",
+    ".ov-prog{margin-left:7px;font-size:11.5px;color:#16a34a;font-weight:700}",
+    ".ov-exrow{display:flex;align-items:center;gap:6px;font-size:13px;background:#fefce8;border:1px dashed #eab308;border-radius:10px;padding:7px 10px;margin:7px 0}",
+    ".ov-exrow .ov-xt{color:#a16207;font-size:11px;margin-left:auto}",
+    ".ov-exrow button{border:none;background:none;cursor:pointer;font-size:13px;padding:0 2px}",
+    ".ov-add{display:block;border:1.5px dashed #cbd5e1;background:none;border-radius:10px;padding:7px 0;width:100%;font:inherit;font-size:12.5px;color:#64748b;cursor:pointer;margin-top:8px}",
+  ].join("\n");
+  document.head.appendChild(css);
+
+  function prog(dayEl){
+    const total = dayEl.querySelectorAll(".ov-bar").length;
+    if (!total) return;
+    const done = dayEl.querySelectorAll(".row.ov-done").length;
+    const tag = dayEl.querySelector(".dtag");
+    if (!tag) return;
+    let sp = tag.querySelector(".ov-prog");
+    if (!sp){ sp = document.createElement("span"); sp.className = "ov-prog"; tag.appendChild(sp); }
+    sp.textContent = done ? "✅ " + done + "/" + total : "";
+  }
+
+  function init(){
+    const days = document.querySelectorAll("#trip .day");
+    if (!days.length) return;
+    days.forEach((dayEl, di) => {
+      const dayN = di + 1;
+      dayEl.querySelectorAll(".day-body .row").forEach(row => {
+        const ic = row.querySelector(".ic");
+        if (ic && ic.textContent.trim() === "🏠") return;          // 住宿行不参与勾选
+        const ttl = row.querySelector(".ttl");
+        if (!ttl) return;
+        const key = "d" + dayN + ":" + ttl.textContent.replace(/详情›|\s+/g, "").slice(0, 24);
+        const host = row.querySelector(".sp-main") || row.querySelector(".body") || row;
+        const bar = document.createElement("div");
+        bar.className = "ov-bar";
+        host.appendChild(bar);
+        const paint = () => {
+          const s = ov.items[key] || {};
+          row.classList.toggle("ov-done", s.v === "done");
+          row.classList.toggle("ov-skip", s.v === "skip");
+          bar.innerHTML =
+            '<button class="ov-b' + (s.v === "done" ? " ov-on" : "") + '" data-a="done">' + (s.v === "done" ? "✅ 去过了" : "○ 完成") + "</button>" +
+            '<button class="ov-b' + (s.v === "skip" ? " ov-onx" : "") + '" data-a="skip">' + (s.v === "skip" ? "⏭ 已跳过" : "⏭ 跳过") + "</button>" +
+            '<button class="ov-b" data-a="note">📝 ' + (s.note ? "改备注" : "备注") + "</button>";
+          let ta = host.querySelector(".ov-note");
+          if (s._open){
+            if (!ta){
+              ta = document.createElement("textarea");
+              ta.className = "ov-note";
+              ta.placeholder = "实际情况 / 心得(行后合并进游记)…";
+              ta.value = s.note || "";
+              ta.oninput = () => { clearTimeout(ta._h); ta._h = setTimeout(() => {
+                const cur = ov.items[key] || (ov.items[key] = {});
+                cur.note = ta.value.trim(); save();
+                if (window.CDFP && cur.v === "done") CDFP.updateNote(key, cur.note);   // 备注同步到足迹心得
+              }, 400); };
+              host.appendChild(ta);
+            }
+          } else if (ta) ta.remove();
+          prog(dayEl);
+        };
+        bar.onclick = e => {
+          const a = e.target.dataset && e.target.dataset.a;
+          if (!a) return;
+          const s = ov.items[key] || (ov.items[key] = {});
+          const was = s.v;
+          if (a === "note") s._open = !s._open;
+          else s.v = (s.v === a) ? "" : a;
+          if (s.v === "done" && !s.ts) s.ts = Date.now();
+          save(); paint();
+          if (window.CDFP && s.v !== was){                    // 联动足迹 tab:勾=生成记录,取消=移除
+            const name = ttl.textContent.replace(/详情›/g, "").replace(/\s+/g, " ").replace(/^\d+\s*/, "").trim();
+            if (s.v === "done") CDFP.addPlan(key, {name, day:dayN, note:s.note || "", ts:s.ts});
+            else if (was === "done") CDFP.removePlan(key);
+          }
+        };
+        paint();
+      });
+      /* 临时加点 */
+      const body = dayEl.querySelector(".day-body");
+      if (!body) return;
+      const exBox = document.createElement("div");
+      body.appendChild(exBox);
+      const paintEx = () => {
+        const list = ov.extras[dayN] || [];
+        exBox.innerHTML = list.map((x, i) =>
+          '<div class="ov-exrow">✨ <span>' + esc(x.t) + '</span><span class="ov-xt">' +
+          new Date(x.ts).toLocaleTimeString("zh-CN", {hour:"2-digit", minute:"2-digit"}) +
+          '</span><button data-i="' + i + '">🗑</button></div>').join("") +
+          '<button class="ov-add">➕ 临时加了别的地方?记一笔</button>';
+        exBox.querySelector(".ov-add").onclick = () => {
+          const t = (prompt("去了哪 / 加了什么?") || "").trim();
+          if (!t) return;
+          (ov.extras[dayN] = ov.extras[dayN] || []).push({t, ts:Date.now()});
+          save(); paintEx();
+        };
+        exBox.querySelectorAll("[data-i]").forEach(b => b.onclick = () => {
+          ov.extras[dayN].splice(+b.dataset.i, 1); save(); paintEx();
+        });
+      };
+      paintEx();
+    });
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", init);
+  else init();
+})();
+
 </script>
 </body>
 </html>
