@@ -1029,6 +1029,11 @@ $("exportBtn").onclick = async () => {
     // pre===false 表示用户手动传的图,不动;其余情况一律跟随最新预填
     else if (!v.hero || (v.pre !== false && v.hero !== PRELOADS[k])) { v.hero = PRELOADS[k]; v.pre = true; await store.set(n, v); }
   }
+  for (const x of DAYS){
+    if (PRELOADS[String(x.n)]) continue;
+    const v = await store.get(x.n);
+    if (v && v.pre !== false) await store.del(x.n);
+  }
   for (const x of DAYS){ const v = await store.get(x.n); heroSet[x.n] = !!(v && v.hero); }
   document.addEventListener("cdwx", () => { if (data) renderCtx(); });
   await switchDay(1);
@@ -1402,18 +1407,23 @@ fp$("fpImpFile").onchange = () => {
 
 async function fpDemoSeed(){
   let done = null; try{ done = localStorage.getItem("fp_demo_v3"); }catch(e){}
-  if (done || fpPts.length) return;
-  const seeds = [
-    {day:1, city:"巴塞罗那", lat:41.3839, lng:2.1762,  note:"示例:哥特区大教堂,到啦!",   mood:"😍", h:10},
-    {day:1, city:"巴塞罗那", lat:41.3817, lng:2.1716,  note:"示例:波盖利亚市场喝鲜榨果汁", mood:"🙂", h:13},
-    {day:3, city:"塞维利亚", lat:37.3931, lng:-5.9919, note:"示例:都市阳伞看日落",       mood:"😮", h:21},
-    {day:6, city:"波尔图",   lat:41.1466, lng:-8.6149, note:"示例:莱罗书店的红楼梯",     mood:"😍", h:11},
-  ];
-  for (const s of seeds){
-    const t = new Date(); t.setHours(s.h, 24, 0, 0);
-    const rec = {id:fpUid(), type:"in", ts:t.getTime(), tzo:-t.getTimezoneOffset(), day:s.day, city:s.city,
-      lat:s.lat, lng:s.lng, acc:12, loc:"ok", photos:[], note:s.note, mood:s.mood};
-    fpPts.push(rec); await fpStore.put(rec);
+  if (done) return;
+  // 升级清理:旧版demo的示例打卡、以及城市不在当前路线里的记录(含顺手位置点)一律清掉
+  const stale = fpPts.filter(p => (p.note && p.note.indexOf("示例:") === 0) || (p.city && FPCITIES.indexOf(p.city) < 0));
+  for (const p of stale){ await fpStore.del(p.id); const i = fpPts.indexOf(p); if (i >= 0) fpPts.splice(i, 1); }
+  if (!fpPts.length){
+    const seeds = [
+      {day:1, city:"巴塞罗那", lat:41.3839, lng:2.1762,  note:"示例:哥特区大教堂,到啦!",   mood:"😍", h:10},
+      {day:1, city:"巴塞罗那", lat:41.3817, lng:2.1716,  note:"示例:波盖利亚市场喝鲜榨果汁", mood:"🙂", h:13},
+      {day:3, city:"塞维利亚", lat:37.3931, lng:-5.9919, note:"示例:都市阳伞看日落",       mood:"😮", h:21},
+      {day:6, city:"波尔图",   lat:41.1466, lng:-8.6149, note:"示例:莱罗书店的红楼梯",     mood:"😍", h:11},
+    ];
+    for (const s of seeds){
+      const t = new Date(); t.setHours(s.h, 24, 0, 0);
+      const rec = {id:fpUid(), type:"in", ts:t.getTime(), tzo:-t.getTimezoneOffset(), day:s.day, city:s.city,
+        lat:s.lat, lng:s.lng, acc:12, loc:"ok", photos:[], note:s.note, mood:s.mood};
+      fpPts.push(rec); await fpStore.put(rec);
+    }
   }
   try{ localStorage.setItem("fp_demo_v3", "1"); }catch(e){}
 }
@@ -1432,6 +1442,9 @@ fpReady = (async () => {
 })();
 
 })();
+</script>
+<script>
+try{ if(!localStorage.getItem("cd_ov_demo_v2")){ localStorage.removeItem("cd_overlay"); localStorage.setItem("cd_ov_demo_v2","1"); } }catch(e){}
 </script>
 <script>
 /* ====== 计划覆盖层:行程 tab 勾选/跳过/备注/临时加点 ======
